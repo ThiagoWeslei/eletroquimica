@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador de Pilha Eletroquímica</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e9f0f7; margin: 0; padding: 20px; color: #222; }
+    .container { max-width: 920px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgb(0 0 0 / 0.1); padding: 30px 35px; }
+    h1, h2 { text-align: center; color: #1a3d7c; margin-bottom: 15px; }
+    label { display: block; margin-top: 20px; font-weight: 600; color: #2c3e50; }
+    select, button, input {
+      width: 100%; padding: 10px 12px; margin-top: 8px; font-size: 1.05em; border-radius: 6px; border: 1.8px solid #ccd6e0;
+      transition: border-color 0.3s ease; font-weight: 500; background-color: #fefefe;
+    }
+    select:focus, input:focus { border-color: #1a3d7c; outline: none; box-shadow: 0 0 6px #a2b8f2; }
+    button {
+      cursor: pointer; background-color: #1a3d7c; border: none; color: white;
+      border-radius: 8px; font-weight: 600; margin-top: 30px;
+      box-shadow: 0 5px 12px rgb(26 61 124 / 0.35); user-select: none;
+    }
+    button:disabled { background-color: #a0acc3; cursor: not-allowed; box-shadow: none; }
+    button:not(:disabled):hover { background-color: #3751a6; box-shadow: 0 6px 16px rgb(26 61 124 / 0.5);}
+    .card { background: #f6f9fc; padding: 20px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgb(0 0 0 / 0.08); margin-top: 40px; }
+    #montagem-pilha {
+      margin: 45px auto 10px; display: flex; justify-content: center; align-items: center;
+      gap: 40px; font-weight: 700; color: #1a3d7c; position: relative; user-select: none;
+    }
+    .eletrodo-container { display: flex; flex-direction: column; align-items: center; width: 160px; }
+    .eletrodo-barra {
+      width: 70px; height: 160px; border-radius: 14px; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 1.25em; text-shadow: 0 0 4px rgba(0,0,0,0.35);
+    }
+    .anodo-barra { background: linear-gradient(180deg, #5a9cec 0%, #3a6ecb 100%); border: 3px solid #2a52a4; box-shadow: 0 4px 14px rgb(58 110 203 / 0.45);}
+    .catodo-barra { background: linear-gradient(180deg, #f3a261 0%, #d97c22 100%); border: 3px solid #b35e12; box-shadow: 0 4px 14px rgb(217 124 34 / 0.5);}
+    .potencial-info { font-size: 1.05em; margin-top: 6px; color: #34495e; min-height: 24px; text-align: center; font-weight: 600; }
+    #ponte-container { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    #ponte-salina {
+      width: 46px; height: 160px; background: repeating-linear-gradient(45deg, #a5b1bf, #a5b1bf 6px, #e0e5ef 6px, #e0e5ef 12px);
+      border-radius: 14px; font-size: 0.9em; color: #697286; display: flex; align-items: center; justify-content: center;
+      writing-mode: vertical-rl; text-orientation: mixed; user-select: none; box-shadow: inset 0 0 8px #bbc8e2; font-weight: 600;
+    }
+    #voltimetro {
+      width: 90px; height: 90px; border: 6px solid #536b9f; border-radius: 50%;
+      background: radial-gradient(circle at center, #eef3fb, #c1c7dd);
+      box-shadow: inset 0 0 20px #a9b4d6, 0 6px 16px rgb(83 107 159 / 0.6);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      font-weight: 200; font-family: 'Consolas', monospace; color: #1a3d7c; user-select: none; position: relative;
+    }
+    #voltimetro span { font-size: 1em; margin-top: 6px; color: #1a3d7c; }
+    #formula-fem {
+      text-align: center; margin-top: 25px; font-size: 1.3em; user-select: none; color: #2c3e50; font-weight: 700;
+    }
+    #formula-fem sup { font-size: 0.8em; font-weight: 600; }
+    #formula-fem span.valor { color: #3751a6; cursor: default; padding: 0 6px; border-bottom: 1.5px dashed #3751a6;}
+    .etapa { display: none; }
+    .etapa.ativa { display: block; }
+    #reacoes-quimicas {
+      background:#fff; padding: 25px 30px; border-radius: 14px; max-width: 900px;
+      margin: 40px auto 0 auto; font-family: 'Courier New', Courier, monospace; font-size: 1.15em;
+      white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;
+      box-shadow: 0 4px 14px rgb(0 0 0 / 0.08); color: #2d3a50; line-height: 1.45;
+    }
+    @media (max-width: 720px) {
+      #montagem-pilha { flex-direction: column; gap: 25px; }
+      .eletrodo-container { width: 90%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" role="main" aria-label="Simulador de pilha eletroquímica">
+  <h1>Simulador de Pilha Eletroquímica</h1>
+
+  <!-- ETAPA 1 -->
+  <div id="etapa1" class="etapa ativa" aria-label="Etapa 1: Escolha dos metais">
+    <h2>1. Escolha os metais dos eletrodos</h2>
+    <label for="metal1">Metal do eletrodo 1:</label>
+    <select id="metal1"></select>
+    <label for="metal2">Metal do eletrodo 2:</label>
+    <select id="metal2"></select>
+    <button id="btnAvancar1" disabled aria-disabled="true">Avançar</button>
+  </div>
+
+  <!-- ETAPA 2 -->
+  <div id="etapa2" class="etapa" aria-label="Etapa 2: Escolha as espécies dos eletrodos">
+    <h2>2. Escolha as espécies de cada eletrodo</h2>
+    <label for="especie1">Espécie do eletrodo 1:</label>
+    <select id="especie1"></select>
+    <label for="especie2">Espécie do eletrodo 2:</label>
+    <select id="especie2"></select>
+    <button id="btnVoltar1">Voltar</button>
+    <button id="btnAvancar2" disabled>Avançar</button>
+  </div>
+
+  <!-- ETAPA 3 -->
+  <div id="etapa3" class="etapa" aria-label="Etapa 3: FEM">
+    <h2>3. Valide a força eletromotriz</h2>
+    <label for="potManual">Informe o valor do E°:</label>
+    <input type="number" step="0.01" id="potManual" placeholder="Ex: 1.10"/>
+    <label for="espontaneidade">A reação é espontânea?</label>
+    <select id="espontaneidade">
+      <option value="">Selecione</option>
+      <option value="sim">Sim</option>
+      <option value="nao">Não</option>
+    </select>
+    <button id="btnVoltar2">Voltar</button>
+    <button id="btnCalcularFem">Calcular</button>
+    <div id="feedbackFem" role="alert" aria-live="polite" style="margin-top: 15px; font-weight: 700;"></div>
+  </div>
+
+  <!-- Visualização da pilha -->
+  <div id="montagem-pilha" aria-label="Montagem da pilha eletroquímica">
+    <div class="eletrodo-container" id="container-anodo">
+      <div class="eletrodo-barra anodo-barra" id="barra-anodo">Ânodo</div>
+      <div class="potencial-info" id="anodoEspecieVis">-</div>
+      <div class="potencial-info" id="anodoValor"> V </div>
+    </div>
+    <div id="ponte-container" aria-label="Ponte salina e voltímetro">
+      <div id="voltimetro" aria-label="Voltímetro indicador da força eletromotriz">
+       <span id="valorFEM" aria-live="polite"> V </span>
+      </div>
+      <div id="ponte-salina" aria-label="Ponte salina">Ponte Salina</div>
+    </div>
+    <div class="eletrodo-container" id="container-catodo">
+      <div class="eletrodo-barra catodo-barra" id="barra-catodo">Cátodo</div>
+      <div class="potencial-info" id="catodoEspecieVis">-</div>
+      <div class="potencial-info" id="catodoValor"> V </div>
+    </div>
+  </div>
+  <div id="formula-fem" aria-label="Fórmula da força eletromotriz">
+    E° = <span> E°<sub>cátodo</sub> </span> - <span> E°<sub>ânodo</sub> </span> = 
+    <span class="valor" id="valor-catodo"> V</span> - 
+    <span class="valor" id="valor-anodo"> V</span> = 
+    <span class="valor" id="valor-fem"> V</span>
+  </div>
+
+  <!-- ETAPA 4 -->
+  <div id="etapa4" class="etapa" aria-label="Etapa 4: Semirreações e reação global">
+    <h2>4. Reações Químicas da Pilha</h2>
+    <pre id="reacoes-quimicas" aria-live="polite" aria-atomic="true"></pre>
+    <button id="btnVoltar3">Voltar</button>
+  </div>
+</div>
+
+<script>
+// ==== BANCO DE DADOS DOS ELETRODOS ====
+const eletrodos = {
+  'Zn': { nome: "Zn", especies: [
+    {id:'Zn', nome:'Zn (s)', E0: 0, n:2},
+    {id:'Zn2+', nome:'Zn²⁺ (aq)', E0: -0.76, n:2}
+  ]},
+  'Cu': { nome: "Cu", especies: [
+    {id:'Cu', nome:'Cu (s)', E0: 0, n:2},
+    {id:'Cu2+', nome:'Cu²⁺ (aq)', E0: 0.34, n:2}
+  ]},
+  'Ag': { nome: "Ag", especies: [
+    {id:'Ag', nome:'Ag (s)', E0: 0, n:1},
+    {id:'Ag+', nome:'Ag⁺ (aq)', E0: 0.80, n:1}
+  ]},
+  'Fe': { nome: "Fe", especies: [
+    {id:'Fe', nome:'Fe (s)', E0: 0, n:2},
+    {id:'Fe2+', nome:'Fe²⁺ (aq)', E0: -0.44, n:2},
+  ]},
+  'Ni': { nome: "Ni", especies: [
+    {id:'Ni', nome:'Ni (s)', E0: 0, n:2},
+    {id:'Ni2+', nome:'Ni²⁺ (aq)', E0: -0.25, n:2}
+  ]},
+  'Pb': { nome: "Pb", especies: [
+    {id:'Pb', nome:'Pb (s)', E0: 0, n:2},
+    {id:'Pb2+', nome:'Pb²⁺ (aq)', E0: -0.13, n:2}
+  ]},
+  'Hg': { nome: "Hg", especies: [
+    {id:'Hg', nome:'Hg (s)', E0: 0, n:2},
+    {id:'Hg2+', nome:'Hg²⁺ (aq)', E0: +0.85, n:2}
+  ]},
+  'Cd': { nome: "Cd", especies: [
+    {id:'Cd', nome:'Cd (s)', E0: 0, n:2},
+    {id:'Cd2+', nome:'Cd²⁺ (aq)', E0: -0.40, n:2}
+  ]},
+  'Au': { nome: "Au", especies: [
+    {id:'Au', nome:'Au (s)', E0: 0, n:3},
+    {id:'Au3+', nome:'Au³⁺ (aq)', E0: +1.50, n:3}
+  ]},
+  'Pt': { nome: "Pt", especies: [
+    {id:'Pt', nome:'Pt (s)', E0: 0, n:2},
+    {id:'Pt2+', nome:'Pt²⁺ (aq)', E0: +0.75, n:2}
+  ]},
+  'Co': { nome: "Co", especies: [
+    {id:'Co', nome:'Co (s)', E0: 0, n:2},
+    {id:'Co2+', nome:'Co²⁺ (aq)', E0: -0.28, n:2}
+  ]},
+  'Cr': { nome: "Cr", especies: [
+    {id:'Cr', nome:'Cr (s)', E0: 0, n:3},
+    {id:'Cr2+', nome:'Cr²⁺ (aq)', E0: -0.91, n:2},
+    {id:'Cr3+', nome:'Cr³⁺ (aq)', E0: -0.74, n:3}
+  ]},
+  'Li': { nome: "Li", especies: [
+    {id:'Li', nome:'Li (s)', E0: 0, n:1},
+    {id:'Li+', nome:'Li⁺ (aq)', E0: -3.04, n:1}
+  ]},
+  'Na': { nome: "Na", especies: [
+    {id:'Na', nome:'Na (s)', E0: 0, n:1},
+    {id:'Na+', nome:'Na⁺ (aq)', E0: -2.71, n:1}
+  ]},
+  'K': { nome: "K", especies: [
+    {id:'K', nome:'K (s)', E0: 0, n:1},
+    {id:'K+', nome:'K⁺ (aq)', E0: -2.93, n:1}
+  ]}
+};
+
+// Apenas metais puros (sólidos) para Etapa 1
+function popularMetais() {
+  const sel1 = document.getElementById('metal1');
+  const sel2 = document.getElementById('metal2');
+  sel1.innerHTML = '<option value="">Selecione</option>';
+  sel2.innerHTML = '<option value="">Selecione</option>';
+  for (const el in eletrodos) {
+    const espMetal = eletrodos[el].especies.find(e => e.E0 === 0 && e.nome.includes('(s)'));
+    if (espMetal) {
+      const opt1 = document.createElement('option');
+      opt1.value = el;
+      opt1.textContent = eletrodos[el].nome;
+      sel1.appendChild(opt1);
+      const opt2 = document.createElement('option');
+      opt2.value = el;
+      opt2.textContent = eletrodos[el].nome;
+      sel2.appendChild(opt2);
+    }
+  }
+}
+
+// Ao escolher o metal, mostra todas as espécies desse metal (para etapa 2)
+function popularEspecies() {
+  const selMetal1 = document.getElementById('metal1');
+  const selMetal2 = document.getElementById('metal2');
+  const selEsp1 = document.getElementById('especie1');
+  const selEsp2 = document.getElementById('especie2');
+
+  selEsp1.innerHTML = '<option value="">Selecione</option>';
+  selEsp2.innerHTML = '<option value="">Selecione</option>';
+
+  const metal1 = selMetal1.value;
+  const metal2 = selMetal2.value;
+
+  if (metal1 && eletrodos[metal1]) {
+    eletrodos[metal1].especies.forEach(esp => {
+      if (esp.E0 !== undefined) {
+        const opt = document.createElement('option');
+        opt.value = metal1 + "|" + esp.id;
+        opt.textContent = esp.nome + ` (E° = ${esp.E0.toFixed(2)} V)`;
+        selEsp1.appendChild(opt);
+      }
+    });
+  }
+  if (metal2 && eletrodos[metal2]) {
+    eletrodos[metal2].especies.forEach(esp => {
+      if (esp.E0 !== undefined) {
+        const opt = document.createElement('option');
+        opt.value = metal2 + "|" + esp.id;
+        opt.textContent = esp.nome + ` (E° = ${esp.E0.toFixed(2)} V)`;
+        selEsp2.appendChild(opt);
+      }
+    });
+  }
+}
+
+// Funções auxiliares (idênticas à versão anterior)
+function getPotencialPorValor(valor) {
+  if (!valor) return null;
+  const [el, espId] = valor.split('|');
+  if (!eletrodos[el]) return null;
+  const especie = eletrodos[el].especies.find(s => s.id === espId);
+  return especie ? especie.E0 : null;
+}
+function getNomeEspecie(valor) {
+  if (!valor) return null;
+  const [el, espId] = valor.split('|');
+  if (!eletrodos[el]) return null;
+  const especie = eletrodos[el].especies.find(s => s.id === espId);
+  return especie ? especie.nome : null;
+}
+function definirAnodoCatodo() {
+  const especie1 = document.getElementById('especie1').value;
+  const especie2 = document.getElementById('especie2').value;
+  if (!especie1 || !especie2) return {anodo: null, catodo: null};
+  const pot1 = getPotencialPorValor(especie1);
+  const pot2 = getPotencialPorValor(especie2);
+  if (pot1 < pot2) {
+    return {anodo: especie1, catodo: especie2};
+  } else {
+    return {anodo: especie2, catodo: especie1};
+  }
+}
+
+function atualizarInfoAnodoCatodo() {
+  const { anodo, catodo } = definirAnodoCatodo();
+  document.getElementById('barra-anodo').textContent = anodo ? "Ânodo" : "Ânodo";
+  document.getElementById('barra-catodo').textContent = catodo ? "Cátodo" : "Cátodo";
+  document.getElementById('anodoEspecieVis').textContent = anodo ? getNomeEspecie(anodo) : "-";
+  document.getElementById('catodoEspecieVis').textContent = catodo ? getNomeEspecie(catodo) : "-";
+  document.getElementById('anodoValor').textContent = anodo ? getPotencialPorValor(anodo).toFixed(2) + " V" : "V";
+  document.getElementById('catodoValor').textContent = catodo ? getPotencialPorValor(catodo).toFixed(2) + " V" : "V";
+  document.getElementById('valor-anodo').textContent = anodo ? getPotencialPorValor(anodo).toFixed(2) + " V" : "V";
+  document.getElementById('valor-catodo').textContent = catodo ? getPotencialPorValor(catodo).toFixed(2) + " V" : "V";
+  document.getElementById('valor-fem').textContent = "V";
+  document.getElementById('valorFEM').textContent = "V";
+  document.getElementById('btnAvancar2').disabled = !(anodo && catodo && anodo !== catodo);
+}
+
+function atualizarFormulaFemValor(fem) {
+  document.getElementById('valor-fem').textContent = fem;
+  document.getElementById('valorFEM').textContent = fem;
+}
+
+function mostrarReacoes(anodoValor, catodoValor) {
+  const container = document.getElementById('reacoes-quimicas');
+  if (!anodoValor || !catodoValor) {
+    container.textContent = 'Selecione ânodo e cátodo válidos para mostrar as reações.';
+    return;
+  }
+  function getInfo(valor) {
+    if (!valor) return null;
+    const [el, espId] = valor.split('|');
+    if (!eletrodos[el]) return null;
+    const especie = eletrodos[el].especies.find(s => s.id === espId);
+    return especie ? {el, especie} : null;
+  }
+  const infoAnodo = getInfo(anodoValor);
+  const infoCatodo = getInfo(catodoValor);
+  function getOutraEspecie(el, id) {
+    const esp = eletrodos[el].especies.find(s => s.id !== id);
+    return esp || { nome: '?', id: '?', E0: null, n: 1 };
+  }
+  const nAnodo = infoAnodo.especie.n || 1;
+  const nCatodo = infoCatodo.especie.n || 1;
+  const mmc = (a, b) => !b ? a : mmc(b, a % b);
+  const mmcEl = nAnodo && nCatodo ? (nAnodo * nCatodo) / mmc(nAnodo, nCatodo) : 1;
+  const fatorAnodo = mmcEl / nAnodo;
+  const fatorCatodo = mmcEl / nCatodo;
+  const espOutroAnodo = getOutraEspecie(infoAnodo.el, infoAnodo.especie.id);
+  const espOutroCatodo = getOutraEspecie(infoCatodo.el, infoCatodo.especie.id);
+  const semirreaOx = `${fatorAnodo > 1 ? fatorAnodo + ' ' : ''}${infoAnodo.especie.nome} → ${fatorAnodo > 1 ? fatorAnodo + ' ' : ''}${espOutroAnodo.nome} + ${mmcEl}e⁻`;
+  const semirreaRed = `${fatorCatodo > 1 ? fatorCatodo + ' ' : ''}${espOutroCatodo.nome} + ${mmcEl}e⁻ → ${fatorCatodo > 1 ? fatorCatodo + ' ' : ''}${infoCatodo.especie.nome}`;
+  const reacaoGlobal =
+    `${fatorAnodo > 1 ? fatorAnodo + ' ' : ''}${infoAnodo.especie.nome} + ${fatorCatodo > 1 ? fatorCatodo + ' ' : ''}${espOutroCatodo.nome} → ` +
+    `${fatorAnodo > 1 ? fatorAnodo + ' ' : ''}${espOutroAnodo.nome} + ${fatorCatodo > 1 ? fatorCatodo + ' ' : ''}${infoCatodo.especie.nome}`;
+  container.textContent =
+`Semirreação de oxidação (ânodo):
+${semirreaOx}
+
+Semirreação de redução (cátodo):
+${semirreaRed}
+
+Reação global da pilha:
+${reacaoGlobal}`;
+}
+
+function mostrarEtapa(n) {
+  document.querySelectorAll('.etapa').forEach(div => div.classList.remove('ativa'));
+  const el = document.getElementById('etapa' + n);
+  if (el) el.classList.add('ativa');
+  if(n === 2) atualizarInfoAnodoCatodo();
+  if(n === 3) atualizarInfoAnodoCatodo();
+  if(n === 4) {
+    const {anodo, catodo} = definirAnodoCatodo();
+    mostrarReacoes(anodo, catodo);
+  }
+}
+
+// --- Inicialização e eventos ---
+document.addEventListener('DOMContentLoaded', () => {
+  popularMetais();
+
+  const metal1 = document.getElementById('metal1');
+  const metal2 = document.getElementById('metal2');
+  const especie1 = document.getElementById('especie1');
+  const especie2 = document.getElementById('especie2');
+  const btnAvancar1 = document.getElementById('btnAvancar1');
+  const btnAvancar2 = document.getElementById('btnAvancar2');
+  const btnVoltar1 = document.getElementById('btnVoltar1');
+  const btnVoltar2 = document.getElementById('btnVoltar2');
+  const btnCalcularFem = document.getElementById('btnCalcularFem');
+  const btnVoltar3 = document.getElementById('btnVoltar3');
+  const potManual = document.getElementById('potManual');
+  const espontaneidade = document.getElementById('espontaneidade');
+  const feedbackFem = document.getElementById('feedbackFem');
+
+  function verificarAvancar1() {
+    btnAvancar1.disabled = !(metal1.value && metal2.value && metal1.value !== metal2.value);
+    btnAvancar1.setAttribute('aria-disabled', btnAvancar1.disabled.toString());
+  }
+
+  function verificarAvancar2() {
+    btnAvancar2.disabled = !(especie1.value && especie2.value && especie1.value !== especie2.value);
+  }
+
+  metal1.addEventListener('change', () => {
+    popularEspecies();
+    verificarAvancar1();
+    verificarAvancar2();
+    atualizarInfoAnodoCatodo();
+  });
+  metal2.addEventListener('change', () => {
+    popularEspecies();
+    verificarAvancar1();
+    verificarAvancar2();
+    atualizarInfoAnodoCatodo();
+  });
+
+  especie1.addEventListener('change', () => {
+    verificarAvancar2();
+    atualizarInfoAnodoCatodo();
+  });
+  especie2.addEventListener('change', () => {
+    verificarAvancar2();
+    atualizarInfoAnodoCatodo();
+  });
+
+  btnAvancar1.addEventListener('click', () => {
+    mostrarEtapa(2);
+    popularEspecies();
+    verificarAvancar2();
+    atualizarInfoAnodoCatodo();
+  });
+
+  btnVoltar1.addEventListener('click', () => {
+    mostrarEtapa(1);
+    atualizarInfoAnodoCatodo();
+  });
+
+  btnAvancar2.addEventListener('click', () => {
+    mostrarEtapa(3);
+    atualizarInfoAnodoCatodo();
+    atualizarFormulaFemValor("V");
+    feedbackFem.textContent = '';
+    potManual.value = '';
+    espontaneidade.value = '';
+  });
+
+  btnVoltar2.addEventListener('click', () => {
+    mostrarEtapa(2);
+    feedbackFem.textContent = '';
+    potManual.value = '';
+    espontaneidade.value = '';
+  });
+
+  btnCalcularFem.addEventListener('click', () => {
+    const potVal = parseFloat(potManual.value);
+    const espont = espontaneidade.value;
+    const {anodo, catodo} = definirAnodoCatodo();
+    if (isNaN(potVal)) {
+      feedbackFem.textContent = 'Por favor, informe um valor válido para a força eletromotriz.';
+      feedbackFem.style.color = '#a12a2a';
+      atualizarFormulaFemValor("V");
+      return;
+    }
+    if (espont !== 'sim' && espont !== 'nao') {
+      feedbackFem.textContent = 'Por favor, selecione se a reação é espontânea ou não.';
+      feedbackFem.style.color = '#a12a2a';
+      atualizarFormulaFemValor("V");
+      return;
+    }
+    if ((potVal > 0 && espont === 'sim') || (potVal <= 0 && espont === 'nao')) {
+      feedbackFem.textContent = 'A FEM está correta';
+      feedbackFem.style.color = '#2a7a2a';
+      mostrarEtapa(4);
+      atualizarFormulaFemValor(potVal.toFixed(2) + " V");
+      mostrarReacoes(anodo, catodo);
+    } else {
+      feedbackFem.textContent = 'A FEM está incorreta. Revise os valores.';
+      feedbackFem.style.color = '#a12a2a';
+      atualizarFormulaFemValor("V");
+    }
+  });
+
+  btnVoltar3.addEventListener('click', () => {
+    mostrarEtapa(1);
+    metal1.value = '';
+    metal2.value = '';
+    especie1.innerHTML = '<option value="">Selecione</option>';
+    especie2.innerHTML = '<option value="">Selecione</option>';
+    potManual.value = '';
+    espontaneidade.value = '';
+    feedbackFem.textContent = '';
+    atualizarInfoAnodoCatodo();
+    atualizarFormulaFemValor("V");
+    document.getElementById('reacoes-quimicas').textContent = '';
+    verificarAvancar1();
+    verificarAvancar2();
+  });
+
+  // Inicializa
+  mostrarEtapa(1);
+  popularMetais();
+  verificarAvancar1();
+  verificarAvancar2();
+  atualizarInfoAnodoCatodo();
+});
+</script>
+</body>
+</html>
