@@ -769,6 +769,10 @@ function atualizarSVG(femVal, revelarLabels){
 }
 
 /* ══ REAÇÕES ══ */
+/* Estado físico padrão do metal sólido/líquido a 25 °C */
+const ESTADO={Hg:"(l)",Br:"(l)",Ga:"(l)",Cs:"(s)"};
+function estadoMetal(el){return ESTADO[el]||"(s)";}
+
 function mostrarReacoes(){
   const{anodo,catodo}=definirPar();
   const box=document.getElementById("reacoes-quimicas");
@@ -776,14 +780,22 @@ function mostrarReacoes(){
   const ea=parseVal(anodo),ec=parseVal(catodo);
   const ma=parseMeta(anodo),mc=parseMeta(catodo);
   const elA=parseElKey(anodo),elC=parseElKey(catodo);
-  function outra(el,id){const e=EL[el].especies.find(e=>e.id!==id);return e||{nome:EL[el].nome+"(s)",n:EL[el].especies[0].n};}
-  const na=ea.n||1,nc=ec.n||1;
-  const m=na*nc/mmc(na,nc),fa=m/na,fc=m/nc;
-  const oA=outra(elA,ea.id),oC=outra(elC,ec.id);
+
+  /* O produto de uma semirreação de oxidação/redução é sempre o metal puro.
+     Derivamos o nome do sólido diretamente do símbolo do elemento,
+     independentemente de quantas espécies iônicas o banco contém.
+     Isso resolve Pt (1 espécie), Hg2²⁺ (produto = Hg(l)), etc. */
+  const solidoA = `${ma.nome}${estadoMetal(elA)}`;
+  const solidoC = `${mc.nome}${estadoMetal(elC)}`;
+
+  const na=ea.n||1, nc=ec.n||1;
+  const m=na*nc/mmc(na,nc), fa=m/na, fc=m/nc;
   const p=x=>x>1?x+" ":"";
-  const ox  =`${p(fa)}${ea.nome}  →  ${p(fa)}${oA.nome}  +  ${m}e⁻`;
-  const red =`${p(fc)}${oC.nome}  +  ${m}e⁻  →  ${p(fc)}${ec.nome}`;
-  const glob=`${p(fa)}${ea.nome}  +  ${p(fc)}${oC.nome}  →  ${p(fa)}${oA.nome}  +  ${p(fc)}${ec.nome}`;
+
+  /* Para Hg₂²⁺ + 2e⁻ → 2Hg(l) o prefixo do produto é fc (não 1) */
+  const ox  =`${p(fa)}${ea.nome}  →  ${p(fa)}${solidoA}  +  ${m}e⁻`;
+  const red =`${p(fc)}${ec.nome}  +  ${m}e⁻  →  ${p(fc)}${solidoC}`;
+  const glob=`${p(fa)}${ea.nome}  +  ${p(fc)}${ec.nome}  →  ${p(fa)}${solidoA}  +  ${p(fc)}${solidoC}`;
   const fem=parseFloat((ec.E0-ea.E0).toFixed(6));
   const msg=fem>0
     ?`<span style="color:var(--ok);font-weight:700">✓ Espontânea</span>`
