@@ -364,7 +364,6 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <label for="metal2">Eletrodo 2</label>
       <select id="metal2" aria-required="true"></select>
     </div>
-    <div id="info-metais" class="info-strip" aria-live="polite"></div>
     <div class="btn-row">
       <button class="btn btn-primary" id="btnAvancar1" disabled aria-disabled="true">Avançar →</button>
     </div>
@@ -762,17 +761,6 @@ function popularEspecies(){
 }
 
 /* ═══════════════ INFO STRIP ═══════════════ */
-function atualizarInfoMetais(){
-  const m1=document.getElementById("metal1").value;
-  const m2=document.getElementById("metal2").value;
-  const strip=document.getElementById("info-metais");
-  if(m1&&m2&&m1!==m2){
-    strip.innerHTML=
-      `<strong>${EL[m1].nome}:</strong> ${EL[m1].desc}<br>`+
-      `<strong>${EL[m2].nome}:</strong> ${EL[m2].desc}`;
-    strip.classList.add("vis");
-  }else{strip.classList.remove("vis");}
-}
 
 function atualizarInfoEspecies(){
   const{anodo,catodo}=definirPar();
@@ -918,7 +906,7 @@ const _b1=document.getElementById("btnAvancar1"),_b2=document.getElementById("bt
 function chk1(){const ok=_m1.value&&_m2.value&&_m1.value!==_m2.value;_b1.disabled=!ok;_b1.setAttribute("aria-disabled",String(!ok));}
 function chk2(){const ok=_e1.value&&_e2.value&&_e1.value!==_e2.value;_b2.disabled=!ok;_b2.setAttribute("aria-disabled",String(!ok));}
 
-[_m1,_m2].forEach(el=>el.addEventListener("change",()=>{popularEspecies();chk1();chk2();atualizarInfoMetais();}));
+[_m1,_m2].forEach(el=>el.addEventListener("change",()=>{popularEspecies();chk1();chk2();}));
 [_e1,_e2].forEach(el=>el.addEventListener("change",()=>{
   chk2();atualizarInfoEspecies();
   if(document.getElementById("pilha-section").style.display!=="none") atualizarSVG(null);
@@ -957,7 +945,6 @@ document.getElementById("btnVoltar3").addEventListener("click",()=>{
   const f=document.getElementById("feedbackFem");f.className="feedback";f.textContent="";
   document.getElementById("reacoes-quimicas").innerHTML="";
   document.getElementById("pilha-leg").innerHTML="";
-  document.getElementById("info-metais").classList.remove("vis");
   document.getElementById("info-especies").classList.remove("vis");
   chk1();chk2();setStep(1);
 });
