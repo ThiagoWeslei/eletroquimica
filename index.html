@@ -5,336 +5,303 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Simulador de Pilha Eletroquímica</title>
 <style>
-/* ══════════════════════════════════════════
-   TOKENS — modo claro (padrão)
-   Paleta inspirada na imagem de referência
-══════════════════════════════════════════ */
+/* ═══════ TOKENS ═══════ */
 :root{
-  --bg:#f0f2f7;
-  --surface:#ffffff;
-  --surface2:#e8eaf2;
-  --surface3:#dde0ee;
-  --border:#c4c9dc;
-  --border2:#a0a8c4;
-  --accent:#1a56db;
-  --accent2:#1240a8;
-  --accent-pill-bg:#e8effe;
-  --text:#0d1117;
-  --text2:#3a4560;
-  --text3:#6b7a99;
-  --ok:#1a6632;
-  --ok-bg:#eaf6ee;
-  --ok-bd:#5cb87a;
-  --err:#a01010;
-  --err-bg:#fdf0f0;
-  --err-bd:#e07070;
-  --pill-bg:#1a1a2e;
-  --pill-text:#e8eaf2;
-  --pill-active-bg:#3a3d5c;
-  --pill-active-text:#ffffff;
-  --pill-border:#3a3d5c;
-  --voltmeter-face:#f5f7fb;
-  --voltmeter-ring:#5a6880;
-  --wire:#22283a;
-  --shadow:0 2px 16px rgba(0,0,0,.10);
-  --fs:16px;
-
+  --bg:#f0f2f7;--surface:#ffffff;--surface2:#e8eaf2;--surface3:#dde0ee;
+  --border:#c4c9dc;--border2:#a0a8c4;
+  --accent:#1a56db;--accent2:#1240a8;
+  --text:#0d1117;--text2:#3a4560;--text3:#6b7a99;
+  --ok:#1a6632;--ok-bg:#eaf6ee;--ok-bd:#5cb87a;
+  --err:#a01010;--err-bg:#fdf0f0;--err-bd:#e07070;
+  --warn:#7a4f00;--warn-bg:#fff8e1;--warn-bd:#f5c842;
+  --shadow:0 2px 16px rgba(0,0,0,.10);--fs:16px;
+  /* Calculadora — Android Material You light */
+  --calc-bg:#f8f9fa;
+  --calc-num-bg:#dfe1e5;--calc-num-txt:#202124;--calc-num-hover:#c9ccd0;
+  --calc-op-bg:#feefc3;--calc-op-txt:#7a4a00;--calc-op-hover:#fce08a;
+  --calc-fn-bg:#e8eaf6;--calc-fn-txt:#3c4f76;--calc-fn-hover:#d3d8f0;
+  --calc-eq-bg:#f9ab00;--calc-eq-txt:#202124;--calc-eq-hover:#f5a000;
+  --calc-disp-bg:#f8f9fa;--calc-disp-expr:#5f6368;--calc-disp-val:#202124;
+  --calc-hist-bg:#f1f3f4;--calc-hist-txt:#80868b;
 }
-
-/* ══════════════════════════════════════════
-   MODO ESCURO — igual à imagem de referência
-   (pill escura sobre fundo escuro profundo)
-══════════════════════════════════════════ */
 [data-theme="dark"]{
-  --bg:#0d0f14;
-  --surface:#141820;
-  --surface2:#1c2030;
-  --surface3:#252a3a;
-  --border:#2c3348;
-  --border2:#404868;
-  --accent:#4a9eff;
-  --accent2:#3a8de8;
-  --accent-pill-bg:#1a2744;
-  --text:#e8eaf0;
-  --text2:#9aa4c0;
-  --text3:#5c6880;
-  --ok:#69f0ae;
-  --ok-bg:rgba(105,240,174,.1);
-  --ok-bd:#2e7d32;
-  --err:#ff5252;
-  --err-bg:rgba(255,82,82,.1);
-  --err-bd:#c62828;
-  --pill-bg:#1c2030;
-  --pill-text:#9aa4c0;
-  --pill-active-bg:#252a3a;
-  --pill-active-text:#e8eaf0;
-  --pill-border:#2c3348;
-  --voltmeter-face:#1c2030;
-  --voltmeter-ring:#404868;
-  --wire:#9aa4c0;
+  --bg:#0d0f14;--surface:#141820;--surface2:#1c2030;--surface3:#252a3a;
+  --border:#2c3348;--border2:#404868;
+  --accent:#4a9eff;--accent2:#3a8de8;
+  --text:#e8eaf0;--text2:#9aa4c0;--text3:#5c6880;
+  --ok:#69f0ae;--ok-bg:rgba(105,240,174,.1);--ok-bd:#2e7d32;
+  --err:#ff5252;--err-bg:rgba(255,82,82,.1);--err-bd:#c62828;
+  --warn:#f5c842;--warn-bg:rgba(245,200,66,.08);--warn-bd:#b8900a;
   --shadow:0 4px 28px rgba(0,0,0,.5);
+  /* Calculadora — Android Material You dark */
+  --calc-bg:#202124;
+  --calc-num-bg:#3c4043;--calc-num-txt:#e8eaed;--calc-num-hover:#4a4e52;
+  --calc-op-bg:#3c3218;--calc-op-txt:#f9ab00;--calc-op-hover:#4a3e1e;
+  --calc-fn-bg:#303236;--calc-fn-txt:#bdc1c6;--calc-fn-hover:#3c4043;
+  --calc-eq-bg:#f9ab00;--calc-eq-txt:#202124;--calc-eq-hover:#f5a000;
+  --calc-disp-bg:#202124;--calc-disp-expr:#9aa0a6;--calc-disp-val:#e8eaed;
+  --calc-hist-bg:#292b2e;--calc-hist-txt:#80868b;
 }
-
-/* ══════════════════════════════════════════
-   ALTO CONTRASTE
-══════════════════════════════════════════ */
 [data-contrast="high"]{
-  --bg:#000000;
-  --surface:#111111;
-  --surface2:#1a1a1a;
-  --surface3:#222222;
-  --border:#ffffff;
-  --border2:#cccccc;
-  --accent:#ffff00;
-  --accent2:#ffe000;
-  --accent-pill-bg:#1a1a00;
-  --text:#ffffff;
-  --text2:#eeeeee;
-  --text3:#bbbbbb;
-  --ok:#00ff88;
-  --ok-bg:#001a0d;
-  --ok-bd:#00ff88;
-  --err:#ff4444;
-  --err-bg:#1a0000;
-  --err-bd:#ff4444;
-  --pill-bg:#000;
-  --pill-text:#fff;
-  --pill-active-bg:#333;
-  --pill-active-text:#ffff00;
-  --pill-border:#fff;
+  --bg:#000;--surface:#111;--surface2:#1a1a1a;--surface3:#222;
+  --border:#fff;--border2:#ccc;
+  --accent:#ffff00;--accent2:#ffe000;
+  --text:#fff;--text2:#eee;--text3:#bbb;
+  --ok:#00ff88;--ok-bg:#001a0d;--ok-bd:#00ff88;
+  --err:#ff4444;--err-bg:#1a0000;--err-bd:#ff4444;
+  --warn:#ffff00;--warn-bg:#1a1a00;--warn-bd:#ffff00;
+  --calc-bg:#000;
+  --calc-num-bg:#111;--calc-num-txt:#fff;--calc-num-hover:#222;
+  --calc-op-bg:#111;--calc-op-txt:#ffff00;--calc-op-hover:#222;
+  --calc-fn-bg:#111;--calc-fn-txt:#eee;--calc-fn-hover:#222;
+  --calc-eq-bg:#ffff00;--calc-eq-txt:#000;--calc-eq-hover:#ffe000;
+  --calc-disp-bg:#000;--calc-disp-expr:#888;--calc-disp-val:#fff;
+  --calc-hist-bg:#111;--calc-hist-txt:#888;
 }
-
-/* ══════════════════════════════════════════
-   RESET & BASE
-══════════════════════════════════════════ */
+/* ═══════ RESET ═══════ */
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:var(--fs)}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Segoe UI',system-ui,sans-serif;
-  padding:16px;
-  min-height:100vh;
-  line-height:1.5;
-  transition:background .25s,color .25s;
-}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;
+  padding:16px;min-height:100vh;line-height:1.5;transition:background .25s,color .25s}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 
-/* ══════════════════════════════════════════
-   CARD HEADER — título + barra a11y no topo
-══════════════════════════════════════════ */
-.card-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-}
+/* ═══════ CARD HEADER + A11Y ═══════ */
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 .card-header h1{margin-bottom:0;flex-shrink:1;min-width:0}
-/* ══════════════════════════════════════════
-   BARRA DE ACESSIBILIDADE — TOPO DO CARD
-   Canto superior direito, fundo #1e2030,
-   pílula branca = ativo, cinza = inativo
-══════════════════════════════════════════ */
-#a11y-bar{
-  display:inline-flex;
-  align-items:center;
-  gap:2px;
-  background:#1e2030;
-  border:1px solid #2a2e42;
-  border-radius:999px;
-  padding:4px 8px;
-  flex-shrink:0;
-  flex-wrap:nowrap;
-}
-/* A− e A+ : sem fundo, sem borda, texto simples */
-.a11y-fs-btn{
-  background:none;
-  border:none;
-  color:#8890aa;
-  font-size:.82rem;
-  font-weight:700;
-  cursor:pointer;
-  padding:4px 7px;
-  border-radius:6px;
-  line-height:1;
-  transition:color .15s;
-  white-space:nowrap;
-}
+#a11y-bar{display:inline-flex;align-items:center;gap:2px;background:#1e2030;
+  border:1px solid #2a2e42;border-radius:999px;padding:4px 8px;flex-shrink:0}
+.a11y-fs-btn{background:none;border:none;color:#8890aa;font-size:.82rem;font-weight:700;
+  cursor:pointer;padding:4px 7px;border-radius:6px;line-height:1;transition:color .15s;white-space:nowrap}
 .a11y-fs-btn:hover{color:#fff}
 .a11y-fs-btn:focus-visible{outline:2px solid #4a9eff;outline-offset:2px}
-/* display de percentagem */
-#fs-display{
-  background:none;
-  border:none;
-  color:#c0c8de;
-  font-size:.82rem;
-  font-weight:700;
-  min-width:38px;
-  text-align:center;
-  padding:0 4px;
-  font-variant-numeric:tabular-nums;
-  pointer-events:none;
-}
-/* separador vertical sutil */
-.a11y-sep{
-  width:1px;height:20px;
-  background:#2e3448;
-  flex-shrink:0;
-  margin:0 4px;
-}
-/* pílulas de tema: inativa = texto cinza, sem fundo */
-.a11y-theme-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  background:none;
-  border:none;
-  color:#7a8299;
-  border-radius:999px;
-  padding:5px 14px;
-  font-size:.82rem;
-  font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
-  transition:background .18s,color .18s;
-  line-height:1.35;
-}
+#fs-display{background:none;border:none;color:#c0c8de;font-size:.82rem;font-weight:700;
+  min-width:38px;text-align:center;padding:0 4px;font-variant-numeric:tabular-nums;pointer-events:none}
+.a11y-sep{width:1px;height:20px;background:#2e3448;flex-shrink:0;margin:0 4px}
+.a11y-theme-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;
+  color:#7a8299;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:background .18s,color .18s;line-height:1.35}
 .a11y-theme-btn:hover{color:#c8cfdf}
-/* pílula ATIVA = fundo branco, texto muito escuro */
-.a11y-theme-btn.on{
-  background:#ffffff;
-  color:#12172a;
-  font-weight:700;
-}
+.a11y-theme-btn.on{background:#fff;color:#12172a;font-weight:700}
 .a11y-theme-btn:focus-visible{outline:2px solid #4a9eff;outline-offset:2px}
 
-/* ══════════════════════════════════════════
-   LAYOUT
-══════════════════════════════════════════ */
+/* ═══════ LAYOUT ═══════ */
 .app{max-width:860px;margin:0 auto}
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:26px 30px;
-  box-shadow:var(--shadow);
-  margin-bottom:14px;
-  transition:background .25s,border-color .25s;
-}
-h1{font-size:1.2rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:20px;letter-spacing:-.01em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:26px 30px;box-shadow:var(--shadow);margin-bottom:14px;transition:background .25s,border-color .25s}
+h1{font-size:1.2rem;font-weight:700;color:var(--accent);letter-spacing:-.01em}
 h2{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:4px}
 .hint{font-size:.8rem;color:var(--text3);margin-bottom:16px;line-height:1.5}
-
-/* ══════════════════════════════════════════
-   STEPPER
-══════════════════════════════════════════ */
-.steps-nav{
-  display:flex;gap:0;margin-bottom:22px;
-  border-radius:10px;overflow:hidden;
-  border:1px solid var(--border);
-}
-.step-tab{
-  flex:1;padding:9px 4px;text-align:center;
-  font-size:.75rem;font-weight:700;
-  color:var(--text3);background:var(--surface2);
-  border:none;border-right:1px solid var(--border);
-  line-height:1.3;cursor:default;
-  transition:background .2s,color .2s;
-}
+.steps-nav{display:flex;gap:0;margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.step-tab{flex:1;padding:9px 4px;text-align:center;font-size:.75rem;font-weight:700;
+  color:var(--text3);background:var(--surface2);border:none;border-right:1px solid var(--border);
+  line-height:1.3;cursor:default;transition:background .2s,color .2s}
 .step-tab:last-child{border-right:none}
 .step-tab.done{color:var(--ok);background:var(--ok-bg)}
 .step-tab.current{color:var(--accent);background:var(--surface);border-bottom:2px solid var(--accent)}
 .step-content{display:none}
 .step-content.ativa{display:block}
-
-/* ══════════════════════════════════════════
-   FORMULÁRIO
-══════════════════════════════════════════ */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:.8rem;font-weight:700;color:var(--text2);margin-bottom:5px}
-select,input[type="number"]{
-  width:100%;padding:9px 13px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;color:var(--text);font-size:.93rem;
-  transition:border-color .2s;appearance:none;-webkit-appearance:none;
-}
+select,input[type="number"]{width:100%;padding:9px 13px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.93rem;
+  transition:border-color .2s;appearance:none;-webkit-appearance:none}
 select:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(74,158,255,.18)}
-.btn-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-button.btn{
-  padding:9px 20px;border-radius:8px;
-  border:1px solid var(--border2);background:var(--surface2);
-  color:var(--text);font-size:.88rem;cursor:pointer;font-weight:700;
-  transition:background .15s,border-color .15s;white-space:nowrap;
-}
+.btn-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
+button.btn{padding:9px 20px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text);font-size:.88rem;cursor:pointer;font-weight:700;transition:background .15s,border-color .15s;white-space:nowrap}
 button.btn:hover:not(:disabled){background:var(--surface3);border-color:var(--accent)}
 button.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 button.btn-primary:hover:not(:disabled){background:var(--accent2)}
 button.btn:disabled{opacity:.35;cursor:not-allowed}
 button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.feedback{
-  padding:10px 14px;border-radius:8px;
-  font-size:.86rem;font-weight:700;
-  margin-top:12px;display:none;
-  border:1px solid transparent;line-height:1.45;
-}
+.feedback{padding:10px 14px;border-radius:8px;font-size:.86rem;font-weight:700;
+  margin-top:12px;display:none;border:1px solid transparent;line-height:1.45}
 .feedback.ok{background:var(--ok-bg);color:var(--ok);display:block;border-color:var(--ok-bd)}
 .feedback.err{background:var(--err-bg);color:var(--err);display:block;border-color:var(--err-bd)}
 
-/* ══════════════════════════════════════════
-   PILHA SVG
-══════════════════════════════════════════ */
+/* ═══════ PILHA SVG ═══════ */
 #pilha-section{display:none;margin:14px 0 0}
-.pilha-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;padding:18px 14px 14px;
-  box-shadow:var(--shadow);
-  transition:background .25s,border-color .25s;
-}
+.pilha-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:18px 14px 14px;box-shadow:var(--shadow);transition:background .25s,border-color .25s}
 #svg-pilha{width:100%;height:auto;display:block}
-.formula-bar{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:10px;padding:12px 18px;
-  text-align:center;font-size:.9rem;color:var(--text2);
-  margin-top:12px;display:none;line-height:1.9;
-  transition:background .25s,border-color .25s;
-}
+.formula-bar{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 18px;text-align:center;font-size:.9rem;color:var(--text2);
+  margin-top:12px;display:none;line-height:1.9;transition:background .25s,border-color .25s}
 .formula-bar .fval{font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:.98rem}
 .leg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:center}
 .leg-chip{font-size:.73rem;padding:3px 10px;border-radius:20px;font-weight:700;border:1px solid;line-height:1.5}
-
-/* ══════════════════════════════════════════
-   REAÇÕES
-══════════════════════════════════════════ */
-.reacoes-box{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:10px;padding:18px 22px;margin-top:14px;
-  transition:background .25s;
-}
+.reacoes-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:18px 22px;margin-top:14px;transition:background .25s}
 .rx-bloco{margin-bottom:14px}
 .rx-bloco:last-child{margin-bottom:0}
-.rx-label{font-size:.74rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;display:block}
-.rx-eq{
-  font-family:'Courier New',monospace;font-size:.9rem;color:var(--text);
-  font-weight:600;display:block;word-break:break-word;
-  padding:8px 12px;background:var(--surface);
-  border-radius:6px;border:1px solid var(--border);
-}
-.rx-fonte{font-size:.72rem;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);line-height:1.6}
+.rx-label{font-size:.74rem;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:5px;display:block}
+.rx-eq{font-family:'Courier New',monospace;font-size:.9rem;color:var(--text);
+  font-weight:600;display:block;word-break:break-word;padding:8px 12px;
+  background:var(--surface);border-radius:6px;border:1px solid var(--border)}
+.rx-fonte{font-size:.72rem;color:var(--text3);margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);line-height:1.6}
 .rx-fonte a{color:var(--accent);text-decoration:none}
 .rx-fonte a:hover{text-decoration:underline}
+
+/* ═══════ IDENTIFICAÇÃO ETAPA 2 ═══════ */
+.id-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.id-card{background:var(--surface2);border:2px solid var(--border);border-radius:10px;
+  padding:12px 14px;transition:border-color .2s}
+.id-card.correct{border-color:var(--ok)!important}
+.id-card.wrong{border-color:var(--err)!important}
+.id-card label{font-size:.78rem;font-weight:700;color:var(--text2);display:block;margin-bottom:6px}
+.id-card select{margin-bottom:0;font-size:.85rem}
+
+/* ═══════ CALCULADORA MODAL — Android Material You ═══════ */
+
+#calc-overlay{
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+#calc-overlay.open{display:flex}
+
+/* bottom-sheet desliza de baixo */
+#calc-box{
+  background:var(--calc-bg);
+  border-radius:28px 28px 0 0;
+  width:100%;max-width:420px;
+  box-shadow:0 -4px 32px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  animation:sheetUp .28s cubic-bezier(.22,1,.36,1);
+}
+@keyframes sheetUp{from{transform:translateY(100%);opacity:.6}to{transform:translateY(0);opacity:1}}
+
+/* handle pill */
+#calc-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:rgba(128,128,128,.4);
+  margin:10px auto 0;flex-shrink:0;
+}
+
+/* botão fechar — canto superior direito */
+#btn-calc-close{
+  position:absolute;top:10px;right:14px;
+  background:var(--calc-fn-bg);border:none;cursor:pointer;
+  color:var(--calc-fn-txt);font-size:.85rem;
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .12s;z-index:2;
+}
+#btn-calc-close:hover{background:var(--calc-num-hover)}
+#btn-calc-close:focus-visible{outline:2px solid var(--calc-eq-bg);outline-offset:2px}
+
+/* linha histórico fina */
+#calc-hist{
+  font-size:.75rem;color:var(--calc-hist-txt);
+  font-family:'Segoe UI',sans-serif;
+  padding:6px 22px 4px;min-height:24px;background:var(--calc-disp-bg);
+  text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* visor principal */
+#calc-disp-wrap{
+  padding:4px 22px 20px;
+  background:var(--calc-disp-bg);
+  display:flex;flex-direction:column;
+  align-items:flex-end;gap:3px;
+  min-height:100px;justify-content:flex-end;
+}
+#calc-expr{
+  font-size:1rem;color:var(--calc-disp-expr);
+  font-weight:400;min-height:24px;text-align:right;
+  word-break:break-all;line-height:1.4;
+}
+#calc-val{
+  font-size:3rem;font-weight:300;
+  color:var(--calc-disp-val);
+  text-align:right;word-break:break-all;
+  line-height:1.05;letter-spacing:-.03em;
+  transition:font-size .12s ease;
+}
+
+/* grade de teclas */
+#calc-keys{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:14px 14px 18px;
+  background:var(--calc-bg);
+}
+
+/* tecla base — oval grande sem borda */
+.ckey{
+  border:none;cursor:pointer;border-radius:999px;
+  font-size:1.4rem;font-weight:400;
+  height:72px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .1s,transform .08s,box-shadow .1s;
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.ckey-num{background:var(--calc-num-bg);color:var(--calc-num-txt);
+  box-shadow:0 1px 3px rgba(0,0,0,.14);}
+.ckey-fn {background:var(--calc-fn-bg);color:var(--calc-fn-txt);font-size:1.1rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.ckey-op {background:var(--calc-op-bg);color:var(--calc-op-txt);font-size:1.55rem;font-weight:300;
+  box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.ckey-eq {background:var(--calc-eq-bg);color:var(--calc-eq-txt);font-size:1.55rem;font-weight:300;
+  box-shadow:0 2px 8px rgba(249,171,0,.4);}
+
+.ckey-num:hover{background:var(--calc-num-hover)}
+.ckey-fn:hover {background:var(--calc-fn-hover)}
+.ckey-op:hover {background:var(--calc-op-hover)}
+.ckey-eq:hover {background:var(--calc-eq-hover)}
+
+.ckey:active,.ckey.pressed{transform:scale(.87);box-shadow:none}
+.ckey:focus-visible{outline:3px solid var(--calc-eq-bg);outline-offset:2px;z-index:1}
+
+/* zero: oval largo, texto à esquerda */
+.ckey-zero{
+  grid-column:span 2;
+  justify-content:flex-start;
+  padding-left:26px;
+}
+
+/* ripple Material */
+.ckey::after{
+  content:'';position:absolute;border-radius:50%;
+  width:80%;padding-top:80%;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  background:rgba(255,255,255,.2);
+  transition:transform .32s,opacity .32s;
+  opacity:0;pointer-events:none;
+}
+.ckey:active::after,.ckey.pressed::after{
+  transform:translate(-50%,-50%) scale(1.6);opacity:1;
+}
+
+/* chip "usar resultado" */
+#calc-use-btn{
+  margin:0 14px 16px;
+  padding:12px 16px;border-radius:999px;
+  background:var(--calc-fn-bg);color:var(--calc-fn-txt);
+  border:none;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:background .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+#calc-use-btn:hover{background:var(--calc-fn-hover)}
+#calc-use-btn:focus-visible{outline:2px solid var(--calc-eq-bg);outline-offset:2px}
 </style>
 </head>
 <body>
-
 <div class="app" role="main" aria-label="Simulador de pilha eletroquímica">
 <div class="card">
   <div class="card-header">
     <h1>Simulador de Pilha Eletroquímica</h1>
     <div id="a11y-bar" role="toolbar" aria-label="Acessibilidade">
       <button class="a11y-fs-btn" id="btn-fs-dec" aria-label="Diminuir fonte">A−</button>
-      <span id="fs-display" aria-live="polite" aria-label="Tamanho de fonte">100%</span>
+      <span id="fs-display" aria-live="polite">100%</span>
       <button class="a11y-fs-btn" id="btn-fs-inc" aria-label="Aumentar fonte">A+</button>
       <div class="a11y-sep" aria-hidden="true"></div>
       <button class="a11y-theme-btn on" id="btn-dark"     aria-pressed="true">🌙 Escuro</button>
@@ -342,9 +309,6 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <button class="a11y-theme-btn"    id="btn-contrast" aria-pressed="false">◑ Contraste</button>
     </div>
   </div>
-  <p class="sr-only">Simulador interativo baseado em dados IUPAC. Escolha metais, espécies, calcule a FEM e visualize a pilha de Daniell.</p>
-
-  <!-- STEPPER -->
   <nav class="steps-nav" aria-label="Progresso">
     <div class="step-tab current" id="stab1" aria-current="step">1 · Metais</div>
     <div class="step-tab" id="stab2">2 · Espécies</div>
@@ -355,14 +319,14 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <!-- ETAPA 1 -->
   <div id="etapa1" class="step-content ativa" role="region" aria-labelledby="lbl-e1">
     <h2 id="lbl-e1">Escolha os metais dos eletrodos</h2>
-    <p class="hint">Selecione dois metais diferentes. O ânodo e o cátodo serão determinados automaticamente pelos potenciais de redução padrão (E°) segundo convenção IUPAC.</p>
+    <p class="hint">Selecione dois metais diferentes. Na próxima etapa você identificará qual é o ânodo e qual é o cátodo.</p>
     <div class="field">
-      <label for="metal1">Eletrodo 1</label>
-      <select id="metal1" aria-required="true"></select>
+      <label for="metal1" id="lbl-m1">Eletrodo A</label>
+      <select id="metal1" aria-required="true" aria-labelledby="lbl-m1"></select>
     </div>
     <div class="field">
-      <label for="metal2">Eletrodo 2</label>
-      <select id="metal2" aria-required="true"></select>
+      <label for="metal2" id="lbl-m2">Eletrodo B</label>
+      <select id="metal2" aria-required="true" aria-labelledby="lbl-m2"></select>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="btnAvancar1" disabled aria-disabled="true">Avançar →</button>
@@ -371,41 +335,60 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
   <!-- ETAPA 2 -->
   <div id="etapa2" class="step-content" role="region" aria-labelledby="lbl-e2">
-    <h2 id="lbl-e2">Espécies de cada semicélula</h2>
-    <p class="hint">Selecione a espécie química presente em cada eletrodo. Os potenciais são os E° de redução padrão (vs. SHE, 25 °C, 1 M, 1 atm) catalogados pela IUPAC.</p>
+    <h2 id="lbl-e2">Espécies e identificação dos eletrodos</h2>
+    <p class="hint">Selecione a espécie iônica de cada eletrodo (E° de redução padrão, IUPAC) e identifique qual é o ânodo e qual é o cátodo.</p>
     <div class="field">
-      <label for="especie1">Espécie do eletrodo 1</label>
+      <label for="especie1">Espécie do eletrodo A</label>
       <select id="especie1" aria-required="true"></select>
     </div>
     <div class="field">
-      <label for="especie2">Espécie do eletrodo 2</label>
+      <label for="especie2">Espécie do eletrodo B</label>
       <select id="especie2" aria-required="true"></select>
     </div>
-    <div id="info-especies" class="info-strip" aria-live="polite"></div>
+    <div class="id-row">
+      <div class="id-card" id="id-card-1">
+        <label for="id-papel1">Eletrodo A é…</label>
+        <select id="id-papel1" aria-required="true">
+          <option value="">— Selecione —</option>
+          <option value="anodo">Ânodo (oxidação −)</option>
+          <option value="catodo">Cátodo (redução +)</option>
+        </select>
+      </div>
+      <div class="id-card" id="id-card-2">
+        <label for="id-papel2">Eletrodo B é…</label>
+        <select id="id-papel2" aria-required="true">
+          <option value="">— Selecione —</option>
+          <option value="anodo">Ânodo (oxidação −)</option>
+          <option value="catodo">Cátodo (redução +)</option>
+        </select>
+      </div>
+    </div>
+    <div id="feedbackId" role="alert" aria-live="polite" class="feedback"></div>
     <div class="btn-row">
       <button class="btn" id="btnVoltar1">← Voltar</button>
-      <button class="btn btn-primary" id="btnAvancar2" disabled aria-disabled="true">Avançar →</button>
+      <button class="btn btn-primary" id="btnAvancar2" disabled aria-disabled="true">Verificar e avançar →</button>
     </div>
   </div>
 
   <!-- ETAPA 3 -->
   <div id="etapa3" class="step-content" role="region" aria-labelledby="lbl-e3">
-    <h2 id="lbl-e3">Valide a força eletromotriz (FEM)</h2>
-    <p class="hint">Use: <strong>E°<sub>célula</sub> = E°<sub>cátodo</sub> − E°<sub>ânodo</sub></strong>. A reação é espontânea quando E° &gt; 0 (ΔG &lt; 0).</p>
+    <h2 id="lbl-e3">Calcule a força eletromotriz (FEM)</h2>
+    <p class="hint">Use: <strong>E°<sub>célula</sub> = E°<sub>cátodo</sub> − E°<sub>ânodo</sub></strong>. Os valores de E° aparecem na montagem abaixo. A reação é espontânea quando E° &gt; 0.</p>
     <div class="field">
       <label for="potManual">Valor de E° calculado (V)</label>
-      <input type="number" step="0.01" id="potManual" placeholder="Ex: 1.10" aria-required="true"/>
+      <input type="number" step="0.001" id="potManual" placeholder="Ex: 1.100" aria-required="true"/>
     </div>
     <div class="field">
       <label for="espontaneidade">A reação é espontânea?</label>
       <select id="espontaneidade" aria-required="true">
         <option value="">— Selecione —</option>
-        <option value="sim">Sim — E° &gt; 0 (ΔG &lt; 0, reação favorável)</option>
-        <option value="nao">Não — E° ≤ 0 (ΔG ≥ 0, reação não favorável)</option>
+        <option value="sim">Sim — E° &gt; 0 (reação espontânea)</option>
+        <option value="nao">Não — E° ≤ 0 (reação não espontânea)</option>
       </select>
     </div>
     <div class="btn-row">
       <button class="btn" id="btnVoltar2">← Voltar</button>
+      <button class="btn" id="btnAbrirCalc" aria-haspopup="dialog">🧮 Calculadora</button>
       <button class="btn btn-primary" id="btnCalcularFem">Verificar →</button>
     </div>
     <div id="feedbackFem" role="alert" aria-live="polite" class="feedback"></div>
@@ -419,7 +402,7 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <button class="btn" id="btnVoltar3">← Recomeçar</button>
     </div>
   </div>
-</div><!-- /card -->
+</div>
 
 <!-- MONTAGEM DA PILHA -->
 <div id="pilha-section" aria-label="Diagrama da pilha eletroquímica">
@@ -429,106 +412,78 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <title id="svg-t">Montagem da pilha eletroquímica</title>
       <desc id="svg-d">Aguardando seleção.</desc>
       <defs>
-        <marker id="mA" viewBox="0 0 10 10" refX="9" refY="5"
-                markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M1 1.5L8.5 5L1 8.5" fill="none" stroke="context-stroke"
-                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M1 1.5L8.5 5L1 8.5" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </marker>
       </defs>
-
-      <!-- ── BÉQUER ESQUERDO ── -->
-      <rect id="sol-L" x="64" y="238" width="190" height="170" rx="0"/>
+      <!-- BÉQUER ESQUERDO (eletrodo A) -->
+      <rect id="sol-L" x="64" y="238" width="190" height="170"/>
       <rect x="56" y="200" width="206" height="212" rx="9" fill="none" id="beq-L" stroke-width="2.5"/>
-      <text id="lbl-sol-A" x="159" y="306" text-anchor="middle"
-            font-family="'Segoe UI',sans-serif" font-size="12.5" font-weight="700">—</text>
-
-      <!-- íons ânodo (4 bolhas) -->
+      <text id="lbl-sol-A" x="159" y="306" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12.5" font-weight="700">—</text>
       <circle id="iA1" cx="92"  cy="272" r="12"/><text id="iAt1" x="92"  y="276.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iA2" cx="154" cy="336" r="12"/><text id="iAt2" x="154" y="340.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iA3" cx="222" cy="276" r="12"/><text id="iAt3" x="222" y="280.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iA4" cx="100" cy="366" r="12"/><text id="iAt4" x="100" y="370.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
-
-      <!-- ── BÉQUER DIREITO ── -->
-      <rect id="sol-R" x="446" y="238" width="190" height="170" rx="0"/>
+      <!-- BÉQUER DIREITO (eletrodo B) -->
+      <rect id="sol-R" x="446" y="238" width="190" height="170"/>
       <rect x="438" y="200" width="206" height="212" rx="9" fill="none" id="beq-R" stroke-width="2.5"/>
-      <text id="lbl-sol-C" x="541" y="306" text-anchor="middle"
-            font-family="'Segoe UI',sans-serif" font-size="12.5" font-weight="700">—</text>
-
-      <!-- íons cátodo -->
+      <text id="lbl-sol-C" x="541" y="306" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12.5" font-weight="700">—</text>
       <circle id="iC1" cx="472" cy="268" r="12"/><text id="iCt1" x="472" y="272.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iC2" cx="538" cy="346" r="12"/><text id="iCt2" x="538" y="350.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iC3" cx="610" cy="275" r="12"/><text id="iCt3" x="610" y="279.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
       <circle id="iC4" cx="502" cy="368" r="12"/><text id="iCt4" x="502" y="372.5" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="800">?</text>
-
-      <!-- ── PONTE SALINA — tubo em U saindo dos béqueres ──
-           Tubo exterior (cinza escuro)  -->
-      <path d="M199 238 L199 175 Q199 155 219 155 L481 155 Q501 155 501 175 L501 238"
-            fill="none" stroke="#6b7280" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- canal interior (cor de fundo, dá aparência de tubo oco) -->
-      <path d="M199 238 L199 175 Q199 155 219 155 L481 155 Q501 155 501 175 L501 238"
-            fill="none" stroke="#d1d5e8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"
-            id="ponte-inner" stroke-dasharray="9 7"/>
-      <!-- rótulo ponte salina — caixa branca com borda -->
-      <rect x="270" y="138" width="160" height="26" rx="6" id="ponte-bg" fill="#f0f2f8" stroke="#9aa0b8" stroke-width="1"/>
-      <text x="350" y="155" text-anchor="middle"
-            font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="700" fill="#3a4060" id="ponte-lbl">Ponte salina · KCl (aq)</text>
-
-      <!-- setas íons dentro da ponte -->
+      <!-- PONTE SALINA -->
+      <path d="M199 238 L199 175 Q199 155 219 155 L481 155 Q501 155 501 175 L501 238" fill="none" stroke="#6b7280" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M199 238 L199 175 Q199 155 219 155 L481 155 Q501 155 501 175 L501 238" fill="none" stroke="#d1d5e8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7"/>
+      <rect x="270" y="138" width="160" height="26" rx="6" fill="#f0f2f8" stroke="#9aa0b8" stroke-width="1"/>
+      <text x="350" y="155" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="700" fill="#3a4060">Ponte salina · KCl (aq)</text>
       <path d="M244 158 L286 158" fill="none" stroke="#b05010" stroke-width="1.6" marker-end="url(#mA)"/>
       <text x="264" y="151" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#b05010">K⁺</text>
       <path d="M456 158 L414 158" fill="none" stroke="#1555aa" stroke-width="1.6" marker-end="url(#mA)"/>
       <text x="436" y="151" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#1555aa">Cl⁻</text>
-
-      <!-- ── ELETRODO ESQUERDO (ânodo) ── -->
+      <!-- ELETRODO ESQUERDO -->
       <rect id="el-A" x="138" y="108" width="42" height="164" rx="8"/>
-      <rect x="140" y="120" width="38" height="4" rx="1" fill="white" fill-opacity=".22" id="el-A-s1"/>
-      <rect x="140" y="134" width="38" height="4" rx="1" fill="white" fill-opacity=".22" id="el-A-s2"/>
-      <rect x="140" y="148" width="38" height="4" rx="1" fill="white" fill-opacity=".22" id="el-A-s3"/>
-      <text id="el-A-lbl" x="159" y="210" text-anchor="middle"
-            font-family="'Segoe UI',sans-serif" font-size="16" font-weight="800" fill="white">—</text>
-
-      <!-- ── ELETRODO DIREITO (cátodo) ── -->
+      <rect x="140" y="120" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
+      <rect x="140" y="134" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
+      <rect x="140" y="148" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
+      <text id="el-A-lbl" x="159" y="210" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="16" font-weight="800" fill="white">—</text>
+      <!-- ELETRODO DIREITO -->
       <rect id="el-C" x="520" y="108" width="42" height="164" rx="8"/>
       <rect x="522" y="120" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
       <rect x="522" y="134" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
       <rect x="522" y="148" width="38" height="4" rx="1" fill="white" fill-opacity=".22"/>
-      <text id="el-C-lbl" x="541" y="210" text-anchor="middle"
-            font-family="'Segoe UI',sans-serif" font-size="16" font-weight="800" fill="white">—</text>
-
-      <!-- ── FIOS EXTERNOS ── -->
-      <line x1="159" y1="108" x2="159" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round" id="wL-v"/>
-      <line x1="159" y1="54"  x2="292" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round" id="wL-h"/>
-      <line x1="541" y1="108" x2="541" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round" id="wR-v"/>
-      <line x1="408" y1="54"  x2="541" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round" id="wR-h"/>
-
-      <!-- setas e⁻ -->
-      <path d="M192 48 L272 48" fill="none" stroke="#1555aa" stroke-width="2" marker-end="url(#mA)" id="arr-L"/>
-      <text x="232" y="41" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="800" fill="#1555aa">e⁻</text>
-      <path d="M428 48 L508 48" fill="none" stroke="#1555aa" stroke-width="2" marker-end="url(#mA)" id="arr-R"/>
-      <text x="468" y="41" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="800" fill="#1555aa">e⁻</text>
-
-      <!-- ── VOLTÍMETRO ── -->
-      <circle cx="350" cy="54" r="40" fill="#f5f7fb" stroke="#7a8aa0" stroke-width="2.2" id="volt-face"/>
-      <path d="M318 66 A32 32 0 0 1 382 66" fill="none" stroke="#c8cfe0" stroke-width="1" id="volt-arc"/>
+      <text id="el-C-lbl" x="541" y="210" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="16" font-weight="800" fill="white">—</text>
+      <!-- FIOS -->
+      <line x1="159" y1="108" x2="159" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="159" y1="54"  x2="292" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="541" y1="108" x2="541" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="408" y1="54"  x2="541" y2="54" stroke="#22283a" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- SETAS e⁻ — reveladas na etapa 4 -->
+      <g id="g-eletrons" opacity="0">
+        <path d="M192 48 L272 48" fill="none" stroke="#1555aa" stroke-width="2" marker-end="url(#mA)"/>
+        <text x="232" y="41" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="800" fill="#1555aa">e⁻</text>
+        <path d="M428 48 L508 48" fill="none" stroke="#1555aa" stroke-width="2" marker-end="url(#mA)"/>
+        <text x="468" y="41" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="800" fill="#1555aa">e⁻</text>
+      </g>
+      <!-- VOLTÍMETRO -->
+      <circle cx="350" cy="54" r="40" fill="#f5f7fb" stroke="#7a8aa0" stroke-width="2.2"/>
+      <path d="M318 66 A32 32 0 0 1 382 66" fill="none" stroke="#c8cfe0" stroke-width="1"/>
       <text x="350" y="45" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" font-weight="700" fill="#7a8aa0">V</text>
-      <text id="voltimetro-val" x="350" y="66" text-anchor="middle"
-            font-family="'Courier New',monospace" font-size="14" font-weight="800" fill="#1555aa">— V</text>
+      <text id="voltimetro-val" x="350" y="66" text-anchor="middle" font-family="'Courier New',monospace" font-size="14" font-weight="800" fill="#1555aa">— V</text>
       <text x="350" y="79" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9.5" fill="#9aabbc">E°célula</text>
-
-      <!-- ── LABELS INFERIORES: ânodo ── -->
-      <rect x="56" y="422" width="206" height="64" rx="9" id="infoA-bg" fill="#dceeff" stroke="#6aabee" stroke-width="1"/>
-      <text x="159" y="442" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="13" font-weight="800" fill="#0a2d6a" id="infoA-nome">—</text>
-      <text x="159" y="459" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="600" fill="#1555aa" id="infoA-e0">E° = — V</text>
-      <text x="159" y="476" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#0a2d6a" letter-spacing=".04em">ÂNODO — OXIDAÇÃO (−)</text>
-
-      <!-- ── LABELS INFERIORES: cátodo ── -->
-      <rect x="438" y="422" width="206" height="64" rx="9" id="infoC-bg" fill="#ffeddc" stroke="#e8a060" stroke-width="1"/>
-      <text x="541" y="442" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="13" font-weight="800" fill="#5a1800" id="infoC-nome">—</text>
-      <text x="541" y="459" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="600" fill="#aa3300" id="infoC-e0">E° = — V</text>
-      <text x="541" y="476" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#5a1800" letter-spacing=".04em">CÁTODO — REDUÇÃO (+)</text>
+      <!-- LABELS POLO — revelados na etapa 4 -->
+      <g id="g-labels-polo" opacity="0">
+        <rect x="56"  y="422" width="206" height="64" rx="9" id="infoA-bg" fill="#dceeff" stroke="#6aabee" stroke-width="1"/>
+        <text x="159" y="442" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="13" font-weight="800" fill="#0a2d6a" id="infoA-nome">—</text>
+        <text x="159" y="459" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="600" fill="#1555aa" id="infoA-e0">—</text>
+        <text x="159" y="476" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#0a2d6a" letter-spacing=".04em" id="infoA-papel">—</text>
+        <rect x="438" y="422" width="206" height="64" rx="9" id="infoC-bg" fill="#ffeddc" stroke="#e8a060" stroke-width="1"/>
+        <text x="541" y="442" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="13" font-weight="800" fill="#5a1800" id="infoC-nome">—</text>
+        <text x="541" y="459" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11.5" font-weight="600" fill="#aa3300" id="infoC-e0">—</text>
+        <text x="541" y="476" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="800" fill="#5a1800" letter-spacing=".04em" id="infoC-papel">—</text>
+      </g>
     </svg>
   </div>
-
   <div class="formula-bar" id="formula-bar" aria-live="polite" aria-atomic="true">
     E°<sub>célula</sub> = E°<sub>cátodo</sub> − E°<sub>ânodo</sub> =
     <span class="fval" id="f-cat">—</span> −
@@ -536,169 +491,141 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <span class="fval" id="f-fem">—</span>
   </div>
   <div class="leg" id="pilha-leg"></div>
-</div><!-- /pilha-section -->
-</div><!-- /app -->
+</div>
+</div>
 
+<!-- ══ CALCULADORA MODAL — Android Material You ══ -->
+<div id="calc-overlay" role="dialog" aria-modal="true" aria-labelledby="calc-hdr-lbl">
+  <div id="calc-box">
+    <div id="calc-handle" aria-hidden="true"></div>
+    <button id="btn-calc-close" aria-label="Fechar calculadora">✕</button>
+    <div id="calc-hist" aria-label="Última operação" aria-live="polite"></div>
+    <div id="calc-disp-wrap">
+      <div id="calc-expr" aria-label="Expressão"></div>
+      <div id="calc-val" aria-live="polite" aria-label="Resultado" id="calc-hdr-lbl">0</div>
+    </div>
+    <div id="calc-keys" role="group" aria-label="Teclado">
+      <button class="ckey ckey-fn"  data-a="AC" aria-label="Limpar">AC</button>
+      <button class="ckey ckey-fn"  data-a="±"  aria-label="Inverter sinal">±</button>
+      <button class="ckey ckey-fn"  data-a="%"  aria-label="Porcentagem">%</button>
+      <button class="ckey ckey-op"  data-a="÷"  aria-label="Dividir">÷</button>
 
+      <button class="ckey ckey-num" data-a="7">7</button>
+      <button class="ckey ckey-num" data-a="8">8</button>
+      <button class="ckey ckey-num" data-a="9">9</button>
+      <button class="ckey ckey-op"  data-a="×"  aria-label="Multiplicar">×</button>
+
+      <button class="ckey ckey-num" data-a="4">4</button>
+      <button class="ckey ckey-num" data-a="5">5</button>
+      <button class="ckey ckey-num" data-a="6">6</button>
+      <button class="ckey ckey-op"  data-a="−"  aria-label="Subtrair">−</button>
+
+      <button class="ckey ckey-num" data-a="1">1</button>
+      <button class="ckey ckey-num" data-a="2">2</button>
+      <button class="ckey ckey-num" data-a="3">3</button>
+      <button class="ckey ckey-op"  data-a="+"  aria-label="Somar">+</button>
+
+      <button class="ckey ckey-num ckey-zero" data-a="0" aria-label="Zero">0</button>
+      <button class="ckey ckey-num" data-a="."  aria-label="Decimal">.</button>
+      <button class="ckey ckey-fn"  data-a="⌫"  aria-label="Apagar dígito">⌫</button>
+      <button class="ckey ckey-eq"  data-a="="  aria-label="Igual">=</button>
+    </div>
+    <button id="calc-use-btn" aria-label="Transferir resultado para o campo E°">
+      <span aria-hidden="true">↑</span> Usar resultado no campo E°
+    </button>
+  </div>
+</div>
 
 <script>
-/* ═══════════════════════════════════════
-   BASE DE DADOS — potenciais IUPAC
-   E° de redução padrão (vs. SHE, 25°C, 1M)
-   Fonte: IUPAC Green Book 2nd ed. p.59;
-   Bard & Parsons "Standard Potentials in
-   Aqueous Solutions" (Dekker, 1985);
-   CRC Handbook of Chemistry & Physics.
-   Apenas espécies com E° ≠ 0 são listadas
-   (o sólido puro M(s) tem E°=0 por definição
-   e é suprimido conforme solicitado).
-═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   BANCO DE DADOS — E° IUPAC (sem E°=0)
+══════════════════════════════════════════════════ */
 const EL={
-  Zn:{nome:"Zn",
-    elFill:"#1976d2",elStroke:"#0d47a1",elTxt:"#fff",
+  Zn:{nome:"Zn",elFill:"#1976d2",elStroke:"#0d47a1",elTxt:"#fff",
     solFill:"#bbdefb",solStroke:"#1976d2",solTxt:"#0d3472",
-    ionFill:"#1976d2",ionTxt:"#fff",ionLbl:"Zn²⁺",
-    solNome:"ZnSO₄ (aq)",
+    ionFill:"#1976d2",ionTxt:"#fff",ionLbl:"Zn²⁺",solNome:"ZnSO₄ (aq)",
     legFill:"#bbdefb",legStroke:"#1976d2",legTxtC:"#0d3472",
-    especies:[
-      {id:"Zn2+", nome:"Zn²⁺ (aq)",  E0:-0.762, n:2, half:"Zn²⁺ + 2e⁻ → Zn(s)"}
-    ]},
-  Cu:{nome:"Cu",
-    elFill:"#c55a11",elStroke:"#8d3800",elTxt:"#fff",
+    especies:[{id:"Zn2+",nome:"Zn²⁺ (aq)",E0:-0.762,n:2,half:"Zn²⁺ + 2e⁻ → Zn(s)"}]},
+  Cu:{nome:"Cu",elFill:"#c55a11",elStroke:"#8d3800",elTxt:"#fff",
     solFill:"#ffe0b2",solStroke:"#c55a11",solTxt:"#6a2800",
-    ionFill:"#c55a11",ionTxt:"#fff",ionLbl:"Cu²⁺",
-    solNome:"CuSO₄ (aq)",
+    ionFill:"#c55a11",ionTxt:"#fff",ionLbl:"Cu²⁺",solNome:"CuSO₄ (aq)",
     legFill:"#ffe0b2",legStroke:"#c55a11",legTxtC:"#6a2800",
-    especies:[
-      {id:"Cu2+",  nome:"Cu²⁺ (aq)", E0:+0.342, n:2, half:"Cu²⁺ + 2e⁻ → Cu(s)"},
-      {id:"Cu+",   nome:"Cu⁺ (aq)",  E0:+0.521, n:1, half:"Cu⁺ + e⁻ → Cu(s)"}
-    ]},
-  Ag:{nome:"Ag",
-    elFill:"#546e7a",elStroke:"#263238",elTxt:"#fff",
+    especies:[{id:"Cu2+",nome:"Cu²⁺ (aq)",E0:+0.342,n:2,half:"Cu²⁺ + 2e⁻ → Cu(s)"},
+              {id:"Cu+", nome:"Cu⁺ (aq)", E0:+0.521,n:1,half:"Cu⁺ + e⁻ → Cu(s)"}]},
+  Ag:{nome:"Ag",elFill:"#546e7a",elStroke:"#263238",elTxt:"#fff",
     solFill:"#eceff1",solStroke:"#546e7a",solTxt:"#1c2a30",
-    ionFill:"#546e7a",ionTxt:"#fff",ionLbl:"Ag⁺",
-    solNome:"AgNO₃ (aq)",
+    ionFill:"#546e7a",ionTxt:"#fff",ionLbl:"Ag⁺",solNome:"AgNO₃ (aq)",
     legFill:"#eceff1",legStroke:"#546e7a",legTxtC:"#1c2a30",
-    especies:[
-      {id:"Ag+",  nome:"Ag⁺ (aq)",  E0:+0.7996, n:1, half:"Ag⁺ + e⁻ → Ag(s)"}
-    ]},
-  Fe:{nome:"Fe",
-    elFill:"#6d4c41",elStroke:"#3e2723",elTxt:"#fff",
+    especies:[{id:"Ag+",nome:"Ag⁺ (aq)",E0:+0.7996,n:1,half:"Ag⁺ + e⁻ → Ag(s)"}]},
+  Fe:{nome:"Fe",elFill:"#6d4c41",elStroke:"#3e2723",elTxt:"#fff",
     solFill:"#efebe9",solStroke:"#6d4c41",solTxt:"#2a1a16",
-    ionFill:"#6d4c41",ionTxt:"#fff",ionLbl:"Fe²⁺",
-    solNome:"FeSO₄ (aq)",
+    ionFill:"#6d4c41",ionTxt:"#fff",ionLbl:"Fe²⁺",solNome:"FeSO₄ (aq)",
     legFill:"#efebe9",legStroke:"#6d4c41",legTxtC:"#2a1a16",
-    especies:[
-      {id:"Fe2+", nome:"Fe²⁺ (aq)", E0:-0.44,  n:2, half:"Fe²⁺ + 2e⁻ → Fe(s)"},
-      {id:"Fe3+", nome:"Fe³⁺ (aq)", E0:+0.771, n:1, half:"Fe³⁺ + e⁻ → Fe²⁺(aq)"}
-    ]},
-  Ni:{nome:"Ni",
-    elFill:"#00695c",elStroke:"#004d40",elTxt:"#fff",
+    especies:[{id:"Fe2+",nome:"Fe²⁺ (aq)",E0:-0.44, n:2,half:"Fe²⁺ + 2e⁻ → Fe(s)"},
+              {id:"Fe3+",nome:"Fe³⁺ (aq)",E0:+0.771,n:1,half:"Fe³⁺ + e⁻ → Fe²⁺(aq)"}]},
+  Ni:{nome:"Ni",elFill:"#00695c",elStroke:"#004d40",elTxt:"#fff",
     solFill:"#e0f2f1",solStroke:"#00897b",solTxt:"#003430",
-    ionFill:"#00897b",ionTxt:"#fff",ionLbl:"Ni²⁺",
-    solNome:"NiSO₄ (aq)",
+    ionFill:"#00897b",ionTxt:"#fff",ionLbl:"Ni²⁺",solNome:"NiSO₄ (aq)",
     legFill:"#e0f2f1",legStroke:"#00897b",legTxtC:"#003430",
-    especies:[
-      {id:"Ni2+", nome:"Ni²⁺ (aq)", E0:-0.257, n:2, half:"Ni²⁺ + 2e⁻ → Ni(s)"}
-    ]},
-  Pb:{nome:"Pb",
-    elFill:"#546e7a",elStroke:"#37474f",elTxt:"#fff",
+    especies:[{id:"Ni2+",nome:"Ni²⁺ (aq)",E0:-0.257,n:2,half:"Ni²⁺ + 2e⁻ → Ni(s)"}]},
+  Pb:{nome:"Pb",elFill:"#546e7a",elStroke:"#37474f",elTxt:"#fff",
     solFill:"#f5f5f5",solStroke:"#78909c",solTxt:"#1c2a30",
-    ionFill:"#78909c",ionTxt:"#fff",ionLbl:"Pb²⁺",
-    solNome:"Pb(NO₃)₂ (aq)",
+    ionFill:"#78909c",ionTxt:"#fff",ionLbl:"Pb²⁺",solNome:"Pb(NO₃)₂ (aq)",
     legFill:"#f5f5f5",legStroke:"#78909c",legTxtC:"#1c2a30",
-    especies:[
-      {id:"Pb2+",  nome:"Pb²⁺ (aq)",  E0:-0.126, n:2, half:"Pb²⁺ + 2e⁻ → Pb(s)"},
-      {id:"PbSO4", nome:"PbSO₄ (s)",  E0:-0.358, n:2, half:"PbSO₄ + 2e⁻ → Pb(s) + SO₄²⁻"}
-    ]},
-  Hg:{nome:"Hg",
-    elFill:"#00838f",elStroke:"#006064",elTxt:"#fff",
+    especies:[{id:"Pb2+", nome:"Pb²⁺ (aq)", E0:-0.126,n:2,half:"Pb²⁺ + 2e⁻ → Pb(s)"},
+              {id:"PbSO4",nome:"PbSO₄ (s)", E0:-0.358,n:2,half:"PbSO₄ + 2e⁻ → Pb(s) + SO₄²⁻"}]},
+  Hg:{nome:"Hg",elFill:"#00838f",elStroke:"#006064",elTxt:"#fff",
     solFill:"#e0f7fa",solStroke:"#00acc1",solTxt:"#004a50",
-    ionFill:"#00acc1",ionTxt:"#fff",ionLbl:"Hg²⁺",
-    solNome:"Hg(NO₃)₂ (aq)",
+    ionFill:"#00acc1",ionTxt:"#fff",ionLbl:"Hg²⁺",solNome:"Hg(NO₃)₂ (aq)",
     legFill:"#e0f7fa",legStroke:"#00acc1",legTxtC:"#004a50",
-    especies:[
-      {id:"Hg2+",  nome:"Hg²⁺ (aq)",  E0:+0.851, n:2, half:"Hg²⁺ + 2e⁻ → Hg(l)"},
-      {id:"Hg2_2+",nome:"Hg₂²⁺ (aq)", E0:+0.796, n:2, half:"Hg₂²⁺ + 2e⁻ → 2Hg(l)"}
-    ]},
-  Cd:{nome:"Cd",
-    elFill:"#6a1b9a",elStroke:"#4a148c",elTxt:"#fff",
+    especies:[{id:"Hg2+",  nome:"Hg²⁺ (aq)", E0:+0.851,n:2,half:"Hg²⁺ + 2e⁻ → Hg(l)"},
+              {id:"Hg2_2+",nome:"Hg₂²⁺ (aq)",E0:+0.796,n:2,half:"Hg₂²⁺ + 2e⁻ → 2Hg(l)"}]},
+  Cd:{nome:"Cd",elFill:"#6a1b9a",elStroke:"#4a148c",elTxt:"#fff",
     solFill:"#f3e5f5",solStroke:"#8e24aa",solTxt:"#2e0650",
-    ionFill:"#8e24aa",ionTxt:"#fff",ionLbl:"Cd²⁺",
-    solNome:"CdSO₄ (aq)",
+    ionFill:"#8e24aa",ionTxt:"#fff",ionLbl:"Cd²⁺",solNome:"CdSO₄ (aq)",
     legFill:"#f3e5f5",legStroke:"#8e24aa",legTxtC:"#2e0650",
-    especies:[
-      {id:"Cd2+", nome:"Cd²⁺ (aq)", E0:-0.403, n:2, half:"Cd²⁺ + 2e⁻ → Cd(s)"}
-    ]},
-  Au:{nome:"Au",
-    elFill:"#b8860b",elStroke:"#7a5600",elTxt:"#fff",
+    especies:[{id:"Cd2+",nome:"Cd²⁺ (aq)",E0:-0.403,n:2,half:"Cd²⁺ + 2e⁻ → Cd(s)"}]},
+  Au:{nome:"Au",elFill:"#b8860b",elStroke:"#7a5600",elTxt:"#fff",
     solFill:"#fff9c4",solStroke:"#f9a825",solTxt:"#4a3000",
-    ionFill:"#f9a825",ionTxt:"#000",ionLbl:"Au³⁺",
-    solNome:"AuCl₃ (aq)",
+    ionFill:"#f9a825",ionTxt:"#000",ionLbl:"Au³⁺",solNome:"AuCl₃ (aq)",
     legFill:"#fff9c4",legStroke:"#f9a825",legTxtC:"#4a3000",
-    especies:[
-      {id:"Au3+", nome:"Au³⁺ (aq)", E0:+1.498, n:3, half:"Au³⁺ + 3e⁻ → Au(s)"},
-      {id:"Au+",  nome:"Au⁺ (aq)",  E0:+1.691, n:1, half:"Au⁺ + e⁻ → Au(s)"}
-    ]},
-  Pt:{nome:"Pt",
-    elFill:"#78909c",elStroke:"#455a64",elTxt:"#fff",
+    especies:[{id:"Au3+",nome:"Au³⁺ (aq)",E0:+1.498,n:3,half:"Au³⁺ + 3e⁻ → Au(s)"},
+              {id:"Au+", nome:"Au⁺ (aq)", E0:+1.691,n:1,half:"Au⁺ + e⁻ → Au(s)"}]},
+  Pt:{nome:"Pt",elFill:"#78909c",elStroke:"#455a64",elTxt:"#fff",
     solFill:"#eceff1",solStroke:"#90a4ae",solTxt:"#1c3040",
-    ionFill:"#90a4ae",ionTxt:"#000",ionLbl:"Pt²⁺",
-    solNome:"PtCl₂ (aq)",
+    ionFill:"#90a4ae",ionTxt:"#000",ionLbl:"Pt²⁺",solNome:"PtCl₂ (aq)",
     legFill:"#eceff1",legStroke:"#90a4ae",legTxtC:"#1c3040",
-    especies:[
-      {id:"Pt2+", nome:"Pt²⁺ (aq)", E0:+1.180, n:2, half:"Pt²⁺ + 2e⁻ → Pt(s)"}
-    ]},
-  Co:{nome:"Co",
-    elFill:"#283593",elStroke:"#1a237e",elTxt:"#fff",
+    especies:[{id:"Pt2+",nome:"Pt²⁺ (aq)",E0:+1.180,n:2,half:"Pt²⁺ + 2e⁻ → Pt(s)"}]},
+  Co:{nome:"Co",elFill:"#283593",elStroke:"#1a237e",elTxt:"#fff",
     solFill:"#e8eaf6",solStroke:"#3949ab",solTxt:"#0d1860",
-    ionFill:"#3949ab",ionTxt:"#fff",ionLbl:"Co²⁺",
-    solNome:"CoSO₄ (aq)",
+    ionFill:"#3949ab",ionTxt:"#fff",ionLbl:"Co²⁺",solNome:"CoSO₄ (aq)",
     legFill:"#e8eaf6",legStroke:"#3949ab",legTxtC:"#0d1860",
-    especies:[
-      {id:"Co2+", nome:"Co²⁺ (aq)", E0:-0.280, n:2, half:"Co²⁺ + 2e⁻ → Co(s)"},
-      {id:"Co3+", nome:"Co³⁺ (aq)", E0:+1.920, n:1, half:"Co³⁺ + e⁻ → Co²⁺(aq)"}
-    ]},
-  Cr:{nome:"Cr",
-    elFill:"#2e7d32",elStroke:"#1b5e20",elTxt:"#fff",
+    especies:[{id:"Co2+",nome:"Co²⁺ (aq)",E0:-0.280,n:2,half:"Co²⁺ + 2e⁻ → Co(s)"},
+              {id:"Co3+",nome:"Co³⁺ (aq)",E0:+1.920,n:1,half:"Co³⁺ + e⁻ → Co²⁺(aq)"}]},
+  Cr:{nome:"Cr",elFill:"#2e7d32",elStroke:"#1b5e20",elTxt:"#fff",
     solFill:"#e8f5e9",solStroke:"#43a047",solTxt:"#0a2e0e",
-    ionFill:"#43a047",ionTxt:"#fff",ionLbl:"Cr³⁺",
-    solNome:"Cr(NO₃)₃ (aq)",
+    ionFill:"#43a047",ionTxt:"#fff",ionLbl:"Cr³⁺",solNome:"Cr(NO₃)₃ (aq)",
     legFill:"#e8f5e9",legStroke:"#43a047",legTxtC:"#0a2e0e",
-    especies:[
-      {id:"Cr3+", nome:"Cr³⁺ (aq)", E0:-0.744, n:3, half:"Cr³⁺ + 3e⁻ → Cr(s)"},
-      {id:"Cr2+", nome:"Cr²⁺ (aq)", E0:-0.913, n:2, half:"Cr²⁺ + 2e⁻ → Cr(s)"}
-    ]},
-  Li:{nome:"Li",
-    elFill:"#c62828",elStroke:"#b71c1c",elTxt:"#fff",
+    especies:[{id:"Cr3+",nome:"Cr³⁺ (aq)",E0:-0.744,n:3,half:"Cr³⁺ + 3e⁻ → Cr(s)"},
+              {id:"Cr2+",nome:"Cr²⁺ (aq)",E0:-0.913,n:2,half:"Cr²⁺ + 2e⁻ → Cr(s)"}]},
+  Li:{nome:"Li",elFill:"#c62828",elStroke:"#b71c1c",elTxt:"#fff",
     solFill:"#ffebee",solStroke:"#e53935",solTxt:"#5a0000",
-    ionFill:"#e53935",ionTxt:"#fff",ionLbl:"Li⁺",
-    solNome:"LiCl (aq)",
+    ionFill:"#e53935",ionTxt:"#fff",ionLbl:"Li⁺",solNome:"LiCl (aq)",
     legFill:"#ffebee",legStroke:"#e53935",legTxtC:"#5a0000",
-    especies:[
-      {id:"Li+", nome:"Li⁺ (aq)", E0:-3.040, n:1, half:"Li⁺ + e⁻ → Li(s)"}
-    ]},
-  Na:{nome:"Na",
-    elFill:"#ad1457",elStroke:"#880e4f",elTxt:"#fff",
+    especies:[{id:"Li+",nome:"Li⁺ (aq)",E0:-3.040,n:1,half:"Li⁺ + e⁻ → Li(s)"}]},
+  Na:{nome:"Na",elFill:"#ad1457",elStroke:"#880e4f",elTxt:"#fff",
     solFill:"#fce4ec",solStroke:"#d81b60",solTxt:"#4a0022",
-    ionFill:"#d81b60",ionTxt:"#fff",ionLbl:"Na⁺",
-    solNome:"NaCl (aq)",
+    ionFill:"#d81b60",ionTxt:"#fff",ionLbl:"Na⁺",solNome:"NaCl (aq)",
     legFill:"#fce4ec",legStroke:"#d81b60",legTxtC:"#4a0022",
-    especies:[
-      {id:"Na+", nome:"Na⁺ (aq)", E0:-2.714, n:1, half:"Na⁺ + e⁻ → Na(s)"}
-    ]},
-  K:{nome:"K",
-    elFill:"#4527a0",elStroke:"#311b92",elTxt:"#fff",
+    especies:[{id:"Na+",nome:"Na⁺ (aq)",E0:-2.714,n:1,half:"Na⁺ + e⁻ → Na(s)"}]},
+  K:{nome:"K",elFill:"#4527a0",elStroke:"#311b92",elTxt:"#fff",
     solFill:"#ede7f6",solStroke:"#5e35b1",solTxt:"#1a0058",
-    ionFill:"#5e35b1",ionTxt:"#fff",ionLbl:"K⁺",
-    solNome:"KCl (aq)",
+    ionFill:"#5e35b1",ionTxt:"#fff",ionLbl:"K⁺",solNome:"KCl (aq)",
     legFill:"#ede7f6",legStroke:"#5e35b1",legTxtC:"#1a0058",
-    especies:[
-      {id:"K+", nome:"K⁺ (aq)", E0:-2.931, n:1, half:"K⁺ + e⁻ → K(s)"}
-    ]}
+    especies:[{id:"K+",nome:"K⁺ (aq)",E0:-2.931,n:1,half:"K⁺ + e⁻ → K(s)"}]}
 };
 
-/* ═══════════════ HELPERS ═══════════════ */
+/* ══ HELPERS ══ */
 function parseVal(v){if(!v)return null;const[el,id]=v.split("|");return EL[el]?.especies.find(e=>e.id===id)||null;}
 function parseMeta(v){if(!v)return null;return EL[v.split("|")[0]]||null;}
 function parseElKey(v){return v?v.split("|")[0]:null;}
@@ -706,6 +633,18 @@ function mmc(a,b){return b===0?a:mmc(b,a%b);}
 function svgA(id,attr,val){const e=document.getElementById(id);if(e)e.setAttribute(attr,val);}
 function svgT(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
 
+/* ══ RANDOMIZAÇÃO ══
+   A variável slotMap indica qual número de seleção (1 ou 2) ocupa
+   o slot "esquerdo" (L) e "direito" (R) do diagrama.
+   É sorteada uma vez ao entrar na etapa 2 e permanece fixa até recomeçar.
+   Isso quebra a associação visual 1=esquerdo, 2=direito. */
+let slotMap={L:"1",R:"2"}; // padrão; será sorteado
+
+function sortearSlots(){
+  slotMap = Math.random()<0.5 ? {L:"1",R:"2"} : {L:"2",R:"1"};
+}
+
+/* Dado especie1 e especie2, retorna anodo/catodo SEM depender de posição */
 function definirPar(){
   const v1=document.getElementById("especie1").value;
   const v2=document.getElementById("especie2").value;
@@ -714,144 +653,156 @@ function definirPar(){
   if(!e1||!e2)return{anodo:null,catodo:null};
   return e1.E0<=e2.E0?{anodo:v1,catodo:v2}:{anodo:v2,catodo:v1};
 }
+/* Retorna "1" ou "2" (número do eletrodo) que é o ânodo */
+function anodoNumero(){
+  const v1=document.getElementById("especie1").value;
+  const v2=document.getElementById("especie2").value;
+  if(!v1||!v2)return null;
+  const e1=parseVal(v1),e2=parseVal(v2);
+  if(!e1||!e2)return null;
+  return e1.E0<=e2.E0?"1":"2";
+}
 
-/* ═══════════════ POPULAR SELECTS ═══════════════ */
+/* ══ POPULAR SELECTS ══ */
+function popularMetais(){
+  const keys=Object.keys(EL);
+  // Embaralha a lista de metais
+  for(let i=keys.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [keys[i],keys[j]]=[keys[j],keys[i]];
+  }
+  ["metal1","metal2"].forEach(id=>{
+    const s=document.getElementById(id);
+    s.innerHTML='<option value="">— Selecione —</option>';
+    keys.forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k; o.textContent=k+" — "+EL[k].nome; s.appendChild(o);
+    });
+  });
+}
+
 function popularEspecies(){
   ["1","2"].forEach(i=>{
     const mk=document.getElementById("metal"+i).value;
     const s=document.getElementById("especie"+i);
     s.innerHTML='<option value="">— Selecione —</option>';
     if(mk&&EL[mk]){
-      EL[mk].especies.forEach(e=>{
+      // Embaralha espécies do metal
+      const esp=[...EL[mk].especies];
+      for(let i=esp.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));[esp[i],esp[j]]=[esp[j],esp[i]];
+      }
+      esp.forEach(e=>{
         const o=document.createElement("option");
         o.value=mk+"|"+e.id;
-        o.textContent=e.nome+"   E° = "+e.E0.toFixed(3)+" V  | "+e.half;
+        o.textContent=e.nome+"   E° = "+e.E0.toFixed(3)+" V";
         s.appendChild(o);
       });
     }
   });
 }
 
-/* ═══════════════ INFO STRIP ═══════════════ */
-
-function atualizarInfoEspecies(){
+/* ══ SVG UPDATE ══ */
+function atualizarSVG(femVal, revelarLabels){
   const{anodo,catodo}=definirPar();
-  const ea=anodo?parseVal(anodo):null;
-  const ec=catodo?parseVal(catodo):null;
-  const strip=document.getElementById("info-especies");
-  if(ea&&ec){
-    const fem=(ec.E0-ea.E0).toFixed(3);
-    strip.innerHTML=
-      `<strong>Ânodo previsto:</strong> ${parseMeta(anodo).nome} — `+
-      `semirreação: ${ea.half} (E° = ${ea.E0.toFixed(3)} V)<br>`+
-      `<strong>Cátodo previsto:</strong> ${parseMeta(catodo).nome} — `+
-      `semirreação: ${ec.half} (E° = ${ec.E0.toFixed(3)} V)<br>`+
-      `<strong>FEM esperada:</strong> E°<sub>célula</sub> = ${ec.E0.toFixed(3)} − (${ea.E0.toFixed(3)}) = <strong>${fem} V</strong>`;
-    strip.classList.add("vis");
-  }else{strip.classList.remove("vis");}
-}
+  // Mapeia: eletrodo no slot L = especie do número slotMap.L
+  const vL=document.getElementById("especie"+slotMap.L).value;
+  const vR=document.getElementById("especie"+slotMap.R).value;
+  const eL=parseVal(vL), eR=parseVal(vR);
+  const mL=parseMeta(vL), mR=parseMeta(vR);
 
-/* ═══════════════ ATUALIZAR SVG ═══════════════ */
-function atualizarSVG(femVal){
-  const{anodo,catodo}=definirPar();
-  const ea=anodo?parseVal(anodo):null;
-  const ec=catodo?parseVal(catodo):null;
-  const ma=anodo?parseMeta(anodo):null;
-  const mc=catodo?parseMeta(catodo):null;
-
-  if(ma){
-    svgA("el-A","fill",ma.elFill);svgA("el-A","stroke",ma.elStroke);svgA("el-A","stroke-width","2");
-    svgT("el-A-lbl",ma.nome);
-    svgA("sol-L","fill",ma.solFill);svgA("beq-L","stroke",ma.solStroke);
-    svgT("lbl-sol-A",ma.solNome);svgA("lbl-sol-A","fill",ma.solTxt);
-    ["iA1","iA2","iA3","iA4"].forEach(id=>svgA(id,"fill",ma.ionFill));
-    ["iAt1","iAt2","iAt3","iAt4"].forEach(id=>{svgT(id,ma.ionLbl);svgA(id,"fill",ma.ionTxt);});
-    svgT("infoA-nome",ma.nome+" · "+ma.solNome);
-    svgA("infoA-bg","fill",ma.legFill);svgA("infoA-bg","stroke",ma.legStroke);
-    svgA("infoA-nome","fill",ma.legTxtC);svgA("infoA-e0","fill",ma.legTxtC);
+  if(mL){
+    svgA("el-A","fill",mL.elFill);svgA("el-A","stroke",mL.elStroke);svgA("el-A","stroke-width","2");
+    svgT("el-A-lbl",mL.nome);
+    svgA("sol-L","fill",mL.solFill);svgA("beq-L","stroke",mL.solStroke);
+    svgT("lbl-sol-A",mL.solNome);svgA("lbl-sol-A","fill",mL.solTxt);
+    ["iA1","iA2","iA3","iA4"].forEach(id=>svgA(id,"fill",mL.ionFill));
+    ["iAt1","iAt2","iAt3","iAt4"].forEach(id=>{svgT(id,mL.ionLbl);svgA(id,"fill",mL.ionTxt);});
   }
-  if(ea) svgT("infoA-e0","E° = "+ea.E0.toFixed(3)+" V");
-
-  if(mc){
-    svgA("el-C","fill",mc.elFill);svgA("el-C","stroke",mc.elStroke);svgA("el-C","stroke-width","2");
-    svgT("el-C-lbl",mc.nome);
-    svgA("sol-R","fill",mc.solFill);svgA("beq-R","stroke",mc.solStroke);
-    svgT("lbl-sol-C",mc.solNome);svgA("lbl-sol-C","fill",mc.solTxt);
-    ["iC1","iC2","iC3","iC4"].forEach(id=>svgA(id,"fill",mc.ionFill));
-    ["iCt1","iCt2","iCt3","iCt4"].forEach(id=>{svgT(id,mc.ionLbl);svgA(id,"fill",mc.ionTxt);});
-    svgT("infoC-nome",mc.nome+" · "+mc.solNome);
-    svgA("infoC-bg","fill",mc.legFill);svgA("infoC-bg","stroke",mc.legStroke);
-    svgA("infoC-nome","fill",mc.legTxtC);svgA("infoC-e0","fill",mc.legTxtC);
+  if(mR){
+    svgA("el-C","fill",mR.elFill);svgA("el-C","stroke",mR.elStroke);svgA("el-C","stroke-width","2");
+    svgT("el-C-lbl",mR.nome);
+    svgA("sol-R","fill",mR.solFill);svgA("beq-R","stroke",mR.solStroke);
+    svgT("lbl-sol-C",mR.solNome);svgA("lbl-sol-C","fill",mR.solTxt);
+    ["iC1","iC2","iC3","iC4"].forEach(id=>svgA(id,"fill",mR.ionFill));
+    ["iCt1","iCt2","iCt3","iCt4"].forEach(id=>{svgT(id,mR.ionLbl);svgA(id,"fill",mR.ionTxt);});
   }
-  if(ec) svgT("infoC-e0","E° = "+ec.E0.toFixed(3)+" V");
 
   const fDisp=femVal!==null?femVal.toFixed(3)+" V":"— V";
   svgT("voltimetro-val",fDisp);
+
+  const ea=anodo?parseVal(anodo):null;
+  const ec=catodo?parseVal(catodo):null;
   document.getElementById("f-an").textContent=ea?ea.E0.toFixed(3)+" V":"—";
   document.getElementById("f-cat").textContent=ec?ec.E0.toFixed(3)+" V":"—";
   document.getElementById("f-fem").textContent=femVal!==null?femVal.toFixed(3)+" V":"—";
 
-  if(ma&&mc&&ea&&ec){
-    svgT("svg-d",
-      "Pilha com ânodo de "+ma.nome+" em "+ma.solNome+
-      " (E° = "+ea.E0.toFixed(3)+" V) e cátodo de "+mc.nome+
-      " em "+mc.solNome+" (E° = "+ec.E0.toFixed(3)+" V). FEM = "+fDisp);
+  document.getElementById("g-eletrons").setAttribute("opacity",revelarLabels?"1":"0");
+  document.getElementById("g-labels-polo").setAttribute("opacity",revelarLabels?"1":"0");
+
+  if(revelarLabels&&mL&&mR&&eL&&eR){
+    const maL=mL, maR=mR;
+    // Identifica qual slot é ânodo para os labels
+    const anodoSlot = anodo===vL ? "L" : "R";
+    const catodoSlot = anodoSlot==="L"?"R":"L";
+    const mAnodo=anodoSlot==="L"?mL:mR, mCatodo=anodoSlot==="L"?mR:mL;
+    const eAnodo=anodoSlot==="L"?eL:eR, eCatodo=anodoSlot==="L"?eR:eL;
+    const infoAnodo=anodoSlot==="L"?"infoA":"infoC";
+    const infoCatodo=catodoSlot==="L"?"infoA":"infoC";
+    svgT(infoAnodo+"-nome",mAnodo.nome+" · "+mAnodo.solNome);
+    svgT(infoAnodo+"-e0","E° = "+eAnodo.E0.toFixed(3)+" V");
+    svgT(infoAnodo+"-papel","ÂNODO — OXIDAÇÃO (−)");
+    svgA(infoAnodo+"-bg","fill","#dceeff");svgA(infoAnodo+"-bg","stroke","#6aabee");
+    svgT(infoCatodo+"-nome",mCatodo.nome+" · "+mCatodo.solNome);
+    svgT(infoCatodo+"-e0","E° = "+eCatodo.E0.toFixed(3)+" V");
+    svgT(infoCatodo+"-papel","CÁTODO — REDUÇÃO (+)");
+    svgA(infoCatodo+"-bg","fill","#ffeddc");svgA(infoCatodo+"-bg","stroke","#e8a060");
   }
 
   const leg=document.getElementById("pilha-leg");
-  if(ma&&mc){
+  if(mL&&mR){
     leg.innerHTML=
-      `<span class="leg-chip" style="background:${ma.legFill};border-color:${ma.legStroke};color:${ma.legTxtC}">Ânodo: ${ma.nome}</span>`+
-      `<span class="leg-chip" style="background:${mc.legFill};border-color:${mc.legStroke};color:${mc.legTxtC}">Cátodo: ${mc.nome}</span>`+
-      `<span class="leg-chip" style="background:#f0f0f8;border-color:#9aa0b8;color:#3a4060">Ponte: KCl (aq)</span>`;
+      `<span class="leg-chip" style="background:${mL.legFill};border-color:${mL.legStroke};color:${mL.legTxtC}">A: ${mL.nome}</span>`+
+      `<span class="leg-chip" style="background:${mR.legFill};border-color:${mR.legStroke};color:${mR.legTxtC}">B: ${mR.nome}</span>`+
+      `<span class="leg-chip" style="background:#f0f0f8;border-color:#9aa0b8;color:#3a4060">KCl (aq)</span>`;
   }
 }
 
-/* ═══════════════ REAÇÕES ═══════════════ */
+/* ══ REAÇÕES ══ */
 function mostrarReacoes(){
   const{anodo,catodo}=definirPar();
   const box=document.getElementById("reacoes-quimicas");
-  if(!anodo||!catodo){box.innerHTML="<p>Selecione ânodo e cátodo válidos.</p>";return;}
+  if(!anodo||!catodo){box.innerHTML="<p>Selecione espécies válidas.</p>";return;}
   const ea=parseVal(anodo),ec=parseVal(catodo);
   const ma=parseMeta(anodo),mc=parseMeta(catodo);
   const elA=parseElKey(anodo),elC=parseElKey(catodo);
-
-  function outra(el,id){
-    const esp=EL[el].especies.find(e=>e.id!==id);
-    return esp||{nome:EL[el].nome+"(s)",n:EL[el].especies[0].n,id:"s",half:"—"};
-  }
-
+  function outra(el,id){const e=EL[el].especies.find(e=>e.id!==id);return e||{nome:EL[el].nome+"(s)",n:EL[el].especies[0].n};}
   const na=ea.n||1,nc=ec.n||1;
   const m=na*nc/mmc(na,nc),fa=m/na,fc=m/nc;
   const oA=outra(elA,ea.id),oC=outra(elC,ec.id);
   const p=x=>x>1?x+" ":"";
-
-  /* semirreações balanceadas */
-  const ox =`${p(fa)}${ea.nome}  →  ${p(fa)}${oA.nome}  +  ${m}e⁻`;
-  const red=`${p(fc)}${oC.nome}  +  ${m}e⁻  →  ${p(fc)}${ec.nome}`;
+  const ox  =`${p(fa)}${ea.nome}  →  ${p(fa)}${oA.nome}  +  ${m}e⁻`;
+  const red =`${p(fc)}${oC.nome}  +  ${m}e⁻  →  ${p(fc)}${ec.nome}`;
   const glob=`${p(fa)}${ea.nome}  +  ${p(fc)}${oC.nome}  →  ${p(fa)}${oA.nome}  +  ${p(fc)}${ec.nome}`;
   const fem=parseFloat((ec.E0-ea.E0).toFixed(6));
-  const deltaG_kJ=(-m*96485*fem/1000).toFixed(2);
-
-  const espontMsg=fem>0
-    ?`<span style="color:var(--ok);font-weight:700">✓ Espontânea — ΔG = ${deltaG_kJ} kJ/mol</span>`
-    :`<span style="color:var(--err);font-weight:700">✗ Não espontânea — ΔG = ${deltaG_kJ} kJ/mol</span>`;
-
+  const msg=fem>0
+    ?`<span style="color:var(--ok);font-weight:700">✓ Espontânea</span>`
+    :`<span style="color:var(--err);font-weight:700">✗ Não espontânea</span>`;
   box.innerHTML=
     `<div class="rx-bloco"><span class="rx-label">Oxidação — ânodo (${ma.nome})</span><span class="rx-eq">${ox}</span></div>`+
     `<div class="rx-bloco"><span class="rx-label">Redução — cátodo (${mc.nome})</span><span class="rx-eq">${red}</span></div>`+
     `<div class="rx-bloco"><span class="rx-label">Reação global</span><span class="rx-eq">${glob}</span></div>`+
-    `<div class="rx-bloco"><span class="rx-label">FEM e energia livre</span>`+
-    `<span class="rx-eq">E°<sub>célula</sub> = ${ec.E0.toFixed(3)} − (${ea.E0.toFixed(3)}) = ${fem.toFixed(3)} V  ·  ${espontMsg}</span></div>`+
-    `<p class="rx-fonte">Potenciais E° de redução padrão (vs. SHE, 25 °C, 1 M, 1 atm) segundo convenção IUPAC —
-      <em>Green Book</em> 2ª ed. p. 59; Bard &amp; Parsons,
-      <em>Standard Potentials in Aqueous Solutions</em>, Dekker, 1985.
-      ΔG = −nFE°, com F = 96 485 C·mol⁻¹ (IUPAC, 2018).
-      <a href="https://goldbook.iupac.org/terms/view/S05912" target="_blank" rel="noopener">IUPAC Gold Book — standard electrode potential</a></p>`;
+    `<div class="rx-bloco"><span class="rx-label">Força eletromotriz (FEM)</span>`+
+    `<span class="rx-eq">E°célula = ${ec.E0.toFixed(3)} − (${ea.E0.toFixed(3)}) = ${fem.toFixed(3)} V  ·  ${msg}</span></div>`+
+    `<p class="rx-fonte">E° de redução padrão (vs. SHE, 25°C, 1M, 1atm) — convenção IUPAC.
+    <em>Green Book</em> 2ª ed. p.59; Bard &amp; Parsons, <em>Standard Potentials in Aqueous Solutions</em>, Dekker, 1985.
+    <a href="https://goldbook.iupac.org/terms/view/S05912" target="_blank" rel="noopener">IUPAC Gold Book</a></p>`;
 }
 
-/* ═══════════════ NAVEGAÇÃO ═══════════════ */
+/* ══ STEPPER ══ */
 const tabs=["stab1","stab2","stab3","stab4"];
+let femFinal=null;
+
 function setStep(n){
   document.querySelectorAll(".step-content").forEach(d=>d.classList.remove("ativa"));
   document.getElementById("etapa"+n).classList.add("ativa");
@@ -864,110 +815,273 @@ function setStep(n){
   });
   const sec=document.getElementById("pilha-section");
   const fb=document.getElementById("formula-bar");
-  if(n>=2){sec.style.display="block";fb.style.display="block";atualizarSVG(null);}
-  else{sec.style.display="none";fb.style.display="none";}
+  if(n>=2){
+    sec.style.display="block";fb.style.display="block";
+    atualizarSVG(n===4?femFinal:null,n===4);
+  }else{
+    sec.style.display="none";fb.style.display="none";
+  }
   if(n===4) mostrarReacoes();
 }
 
-/* ═══════════════ BOTÕES ═══════════════ */
+/* ══ CONTROLES ══ */
 popularMetais();
 const _m1=document.getElementById("metal1"),_m2=document.getElementById("metal2");
 const _e1=document.getElementById("especie1"),_e2=document.getElementById("especie2");
 const _b1=document.getElementById("btnAvancar1"),_b2=document.getElementById("btnAvancar2");
+const _p1=document.getElementById("id-papel1"),_p2=document.getElementById("id-papel2");
 
 function chk1(){const ok=_m1.value&&_m2.value&&_m1.value!==_m2.value;_b1.disabled=!ok;_b1.setAttribute("aria-disabled",String(!ok));}
-function chk2(){const ok=_e1.value&&_e2.value&&_e1.value!==_e2.value;_b2.disabled=!ok;_b2.setAttribute("aria-disabled",String(!ok));}
+function chk2(){
+  const espsOk=_e1.value&&_e2.value&&_e1.value!==_e2.value;
+  const papelOk=_p1.value&&_p2.value&&_p1.value!==_p2.value;
+  _b2.disabled=!(espsOk&&papelOk);_b2.setAttribute("aria-disabled",String(!(espsOk&&papelOk)));
+}
 
 [_m1,_m2].forEach(el=>el.addEventListener("change",()=>{popularEspecies();chk1();chk2();}));
 [_e1,_e2].forEach(el=>el.addEventListener("change",()=>{
-  chk2();atualizarInfoEspecies();
-  if(document.getElementById("pilha-section").style.display!=="none") atualizarSVG(null);
+  chk2();
+  document.getElementById("feedbackId").className="feedback";document.getElementById("feedbackId").textContent="";
+  document.getElementById("id-card-1").className="id-card";document.getElementById("id-card-2").className="id-card";
+  if(document.getElementById("pilha-section").style.display!=="none") atualizarSVG(null,false);
+}));
+[_p1,_p2].forEach(el=>el.addEventListener("change",()=>{
+  chk2();
+  document.getElementById("feedbackId").className="feedback";document.getElementById("feedbackId").textContent="";
+  document.getElementById("id-card-1").className="id-card";document.getElementById("id-card-2").className="id-card";
 }));
 
-_b1.addEventListener("click",()=>{setStep(2);popularEspecies();chk2();});
-document.getElementById("btnVoltar1").addEventListener("click",()=>setStep(1));
-_b2.addEventListener("click",()=>{
-  setStep(3);
-  document.getElementById("potManual").value="";
-  document.getElementById("espontaneidade").value="";
-  const f=document.getElementById("feedbackFem");f.className="feedback";f.textContent="";
-  atualizarSVG(null);
+_b1.addEventListener("click",()=>{
+  sortearSlots(); // randomiza a posição esq/dir ao entrar na etapa 2
+  setStep(2);popularEspecies();chk2();
 });
-document.getElementById("btnVoltar2").addEventListener("click",()=>setStep(2));
+document.getElementById("btnVoltar1").addEventListener("click",()=>setStep(1));
+
+_b2.addEventListener("click",()=>{
+  const fb=document.getElementById("feedbackId");
+  const anNum=anodoNumero();
+  if(!anNum){fb.className="feedback err";fb.textContent="⚠ Selecione as espécies de ambos os eletrodos.";return;}
+  const catNum=anNum==="1"?"2":"1";
+  const papelAnodo=document.getElementById("id-papel"+anNum).value;
+  const papelCatodo=document.getElementById("id-papel"+catNum).value;
+  const okAnodo=papelAnodo==="anodo", okCatodo=papelCatodo==="catodo";
+  document.getElementById("id-card-"+anNum).className="id-card "+(okAnodo?"correct":"wrong");
+  document.getElementById("id-card-"+catNum).className="id-card "+(okCatodo?"correct":"wrong");
+  if(okAnodo&&okCatodo){
+    fb.className="feedback ok";
+    fb.textContent="✓ Correto! Eletrodo "+anNum+" é o ânodo (E° menor) e eletrodo "+catNum+" é o cátodo (E° maior).";
+    setTimeout(()=>{
+      setStep(3);
+      document.getElementById("potManual").value="";
+      document.getElementById("espontaneidade").value="";
+      const f2=document.getElementById("feedbackFem");f2.className="feedback";f2.textContent="";
+      femFinal=null;atualizarSVG(null,false);
+    },900);
+  }else{
+    const ea=parseVal(document.getElementById("especie"+anNum).value);
+    const ec=parseVal(document.getElementById("especie"+catNum).value);
+    let msg="✗ Identificação incorreta. ";
+    if(!okAnodo) msg+="Eletrodo "+anNum+" tem E° = "+(ea?ea.E0.toFixed(3):"?")+" V — o menor potencial indica o ânodo. ";
+    if(!okCatodo) msg+="Eletrodo "+catNum+" tem E° = "+(ec?ec.E0.toFixed(3):"?")+" V — o maior potencial indica o cátodo.";
+    fb.className="feedback err";fb.textContent=msg;
+  }
+});
+
+document.getElementById("btnVoltar2").addEventListener("click",()=>{
+  setStep(2);
+  document.getElementById("feedbackId").className="feedback";document.getElementById("feedbackId").textContent="";
+  document.getElementById("id-card-1").className="id-card";document.getElementById("id-card-2").className="id-card";
+});
+
 document.getElementById("btnCalcularFem").addEventListener("click",()=>{
   const pv=parseFloat(document.getElementById("potManual").value);
   const esp=document.getElementById("espontaneidade").value;
   const fb=document.getElementById("feedbackFem");
   if(isNaN(pv)){fb.className="feedback err";fb.textContent="⚠ Informe um valor numérico para E°.";return;}
   if(!esp){fb.className="feedback err";fb.textContent="⚠ Selecione a espontaneidade.";return;}
-  const ok=(pv>0&&esp==="sim")||(pv<=0&&esp==="nao");
-  if(ok){
-    fb.className="feedback ok";fb.textContent="✓ Correto! Carregando as reações...";
-    atualizarSVG(pv);
+  const{anodo,catodo}=definirPar();
+  const ea=parseVal(anodo),ec=parseVal(catodo);
+  const corr=parseFloat((ec.E0-ea.E0).toFixed(3));
+  const valOk=Math.abs(pv-corr)<=0.01;
+  const espOk=(pv>0&&esp==="sim")||(pv<=0&&esp==="nao");
+  if(valOk&&espOk){
+    fb.className="feedback ok";fb.textContent="✓ Correto! E° = "+pv.toFixed(3)+" V. Avançando para as reações...";
+    femFinal=pv;
+    atualizarSVG(femFinal,false);
     setTimeout(()=>setStep(4),900);
+  }else if(!valOk){
+    fb.className="feedback err";fb.textContent="✗ Valor incorreto. Lembre: E°célula = E°cátodo − E°ânodo. Use a calculadora se precisar.";
   }else{
-    fb.className="feedback err";fb.textContent="✗ Revise: E° = E°cátodo − E°ânodo. Verifique o sinal e a espontaneidade.";
+    fb.className="feedback err";fb.textContent="✗ O valor está correto, mas a espontaneidade está errada. Observe o sinal de E°.";
   }
 });
+
 document.getElementById("btnVoltar3").addEventListener("click",()=>{
   ["metal1","metal2"].forEach(id=>{document.getElementById(id).value="";});
-  ["especie1","especie2"].forEach(id=>{document.getElementById(id).innerHTML='<option value="">— Selecione —</option>';});
+  ["especie1","especie2","id-papel1","id-papel2","espontaneidade"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el.tagName==="SELECT") el.innerHTML='<option value="">— Selecione —</option>';
+    else el.value="";
+  });
   document.getElementById("potManual").value="";
-  document.getElementById("espontaneidade").value="";
-  const f=document.getElementById("feedbackFem");f.className="feedback";f.textContent="";
+  ["feedbackFem","feedbackId"].forEach(id=>{const f=document.getElementById(id);f.className="feedback";f.textContent="";});
+  ["id-card-1","id-card-2"].forEach(id=>{document.getElementById(id).className="id-card";});
   document.getElementById("reacoes-quimicas").innerHTML="";
   document.getElementById("pilha-leg").innerHTML="";
-  document.getElementById("info-especies").classList.remove("vis");
-  chk1();chk2();setStep(1);
+  femFinal=null; popularMetais(); chk1(); chk2(); setStep(1);
 });
 chk1();chk2();
 
-/* ═══════════════ ACESSIBILIDADE ═══════════════ */
-let fsBase=16, fsStep=0;
+/* ══════════════════════════════════════════════
+   CALCULADORA — redesenhada
+   · Visor duplo: expressão (topo) + valor (grande)
+   · Histórico da última operação completa
+   · Backspace (⌫), teclado físico completo
+   · Botão "Usar resultado" preenche campo E°
+══════════════════════════════════════════════ */
+(function(){
+  /* estado */
+  let cur="0", expr="", op=null, prev=null, justEq=false, lastExpr="";
+
+  const dVal =document.getElementById("calc-val");
+  const dExpr =document.getElementById("calc-expr");
+  const dHist =document.getElementById("calc-hist");
+
+  function render(){
+    /* ajusta tamanho de fonte pelo comprimento */
+    const len=cur.length;
+    dVal.style.fontSize=len>10?"1.3rem":len>8?"1.6rem":"2rem";
+    dVal.textContent=cur;
+    dExpr.textContent=expr;
+  }
+
+  function fmt(n){
+    /* formata número evitando notação científica desnecessária */
+    if(!isFinite(n)) return "Erro";
+    const s=parseFloat(n.toFixed(10)).toString();
+    return s.length>14?parseFloat(n.toPrecision(10)).toString():s;
+  }
+
+  function pressKey(a){
+    if(a>="0"&&a<="9"){
+      if(justEq){cur="0";expr="";justEq=false;}
+      cur=(cur==="0"||cur==="-0")?
+          (cur==="-0"?"-"+a:a):
+          (cur+a);
+    }else if(a==="."){
+      if(justEq){cur="0.";expr="";justEq=false;}
+      else if(!cur.includes(".")) cur+=".";
+    }else if(a==="AC"){
+      cur="0";expr="";op=null;prev=null;justEq=false;
+    }else if(a==="⌫"){
+      if(justEq){cur="0";expr="";justEq=false;return render();}
+      cur=cur.length>1?cur.slice(0,-1):"0";
+    }else if(a==="±"){
+      cur=cur.startsWith("-")?cur.slice(1):"-"+cur;
+    }else if(a==="%"){
+      cur=fmt(parseFloat(cur)/100);
+    }else if(["+","−","×","÷"].includes(a)){
+      if(op&&prev!==null&&!justEq){
+        const res=calc(prev,op,parseFloat(cur));
+        cur=fmt(res);prev=res;
+      }else{
+        prev=parseFloat(cur);
+      }
+      op=a; expr=cur+" "+a; justEq=false;
+    }else if(a==="="){
+      if(op&&prev!==null){
+        const c=parseFloat(cur);
+        const res=calc(prev,op,c);
+        lastExpr=fmt(prev)+" "+op+" "+fmt(c)+" =";
+        dHist.textContent=lastExpr+" "+fmt(res);
+        cur=fmt(res);expr="";op=null;prev=null;justEq=true;
+      }
+    }
+    render();
+  }
+
+  function calc(a,op,b){
+    switch(op){
+      case "+": return a+b;
+      case "−": return a-b;
+      case "×": return a*b;
+      case "÷": return b!==0?a/b:NaN;
+    }
+  }
+
+  /* clique nos botões */
+  document.querySelectorAll(".ckey").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      btn.classList.add("pressed");
+      setTimeout(()=>btn.classList.remove("pressed"),120);
+      pressKey(btn.dataset.a);
+    });
+  });
+
+  /* teclado físico */
+  document.addEventListener("keydown",e=>{
+    if(!document.getElementById("calc-overlay").classList.contains("open")) return;
+    e.preventDefault();
+    const map={"0":"0","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9",
+      ".":".","Enter":"=","=":"=","Backspace":"⌫","Delete":"AC","Escape":"close",
+      "+":"+","-":"−","*":"×","/":"÷","%":"%"};
+    const a=map[e.key];
+    if(a==="close"){fecharCalc();return;}
+    if(a) pressKey(a);
+  });
+
+  /* usar resultado */
+  document.getElementById("calc-use-btn").addEventListener("click",()=>{
+    const num=parseFloat(dVal.textContent);
+    if(!isNaN(num)){
+      document.getElementById("potManual").value=parseFloat(num.toFixed(4));
+    }
+    fecharCalc();
+  });
+
+  /* abrir/fechar */
+  function fecharCalc(){document.getElementById("calc-overlay").classList.remove("open");}
+  document.getElementById("btnAbrirCalc").addEventListener("click",()=>{
+    document.getElementById("calc-overlay").classList.add("open");
+    dVal.focus();
+  });
+  document.getElementById("btn-calc-close").addEventListener("click",fecharCalc);
+  document.getElementById("calc-overlay").addEventListener("click",e=>{
+    if(e.target===document.getElementById("calc-overlay")) fecharCalc();
+  });
+
+  render();
+})();
+
+/* ══ ACESSIBILIDADE ══ */
+let fsStep=0;
 const root=document.documentElement;
-
-function fsPercent(step){ return Math.round(100+step*12.5); }
-function applyFs(){
-  const px=fsBase+fsStep*2;
-  root.style.setProperty("--fs",px+"px");
-  document.getElementById("fs-display").textContent=fsPercent(fsStep)+"%";
-}
-
-/* inicia no modo escuro */
 root.setAttribute("data-theme","dark");
 
+function applyFs(){
+  root.style.setProperty("--fs",(16+fsStep*2)+"px");
+  document.getElementById("fs-display").textContent=Math.round(100+fsStep*12.5)+"%";
+}
 function clearTheme(){
-  root.removeAttribute("data-theme");
-  root.removeAttribute("data-contrast");
+  root.removeAttribute("data-theme");root.removeAttribute("data-contrast");
   ["btn-dark","btn-light","btn-contrast"].forEach(id=>{
-    const b=document.getElementById(id);
-    b.classList.remove("on");
-    b.setAttribute("aria-pressed","false");
+    const b=document.getElementById(id);b.classList.remove("on");b.setAttribute("aria-pressed","false");
   });
 }
-
 document.getElementById("btn-dark").addEventListener("click",function(){
-  const on=this.classList.contains("on");
-  clearTheme();
+  const on=this.classList.contains("on");clearTheme();
   if(!on){root.setAttribute("data-theme","dark");this.classList.add("on");this.setAttribute("aria-pressed","true");}
 });
 document.getElementById("btn-light").addEventListener("click",function(){
-  const on=this.classList.contains("on");
-  clearTheme();
+  const on=this.classList.contains("on");clearTheme();
   if(!on){this.classList.add("on");this.setAttribute("aria-pressed","true");}
 });
 document.getElementById("btn-contrast").addEventListener("click",function(){
-  const on=this.classList.contains("on");
-  clearTheme();
+  const on=this.classList.contains("on");clearTheme();
   if(!on){root.setAttribute("data-contrast","high");this.classList.add("on");this.setAttribute("aria-pressed","true");}
 });
-
-document.getElementById("btn-fs-inc").addEventListener("click",()=>{
-  if(fsStep<4){fsStep++;applyFs();}
-});
-document.getElementById("btn-fs-dec").addEventListener("click",()=>{
-  if(fsStep>-2){fsStep--;applyFs();}
-});
+document.getElementById("btn-fs-inc").addEventListener("click",()=>{if(fsStep<4){fsStep++;applyFs();}});
+document.getElementById("btn-fs-dec").addEventListener("click",()=>{if(fsStep>-2){fsStep--;applyFs();}});
 
 setStep(1);
 </script>
