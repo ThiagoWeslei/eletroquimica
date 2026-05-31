@@ -23,6 +23,12 @@
   --calc-eq-bg:#f9ab00;--calc-eq-txt:#202124;--calc-eq-hover:#f5a000;
   --calc-disp-bg:#f8f9fa;--calc-disp-expr:#5f6368;--calc-disp-val:#202124;
   --calc-hist-bg:#f1f3f4;--calc-hist-txt:#80868b;
+  /* Barra acessibilidade — claro */
+  --a11y-bg:#e8eaf2;--a11y-border:#c0c6d8;
+  --a11y-btn-txt:#3a4560;--a11y-btn-hover:#0d1117;
+  --a11y-sep:#c0c6d8;--a11y-disp:#5a6380;
+  --a11y-on-bg:#1a56db;--a11y-on-txt:#ffffff;
+  --a11y-focus:#1a56db;
 }
 [data-theme="dark"]{
   --bg:#0d0f14;--surface:#141820;--surface2:#1c2030;--surface3:#252a3a;
@@ -41,6 +47,12 @@
   --calc-eq-bg:#f9ab00;--calc-eq-txt:#202124;--calc-eq-hover:#f5a000;
   --calc-disp-bg:#202124;--calc-disp-expr:#9aa0a6;--calc-disp-val:#e8eaed;
   --calc-hist-bg:#292b2e;--calc-hist-txt:#80868b;
+  /* Barra acessibilidade — dark */
+  --a11y-bg:#1e2030;--a11y-border:#2a2e42;
+  --a11y-btn-txt:#8890aa;--a11y-btn-hover:#ffffff;
+  --a11y-sep:#2e3448;--a11y-disp:#c0c8de;
+  --a11y-on-bg:#ffffff;--a11y-on-txt:#12172a;
+  --a11y-focus:#4a9eff;
 }
 [data-contrast="high"]{
   --bg:#000;--surface:#111;--surface2:#1a1a1a;--surface3:#222;
@@ -57,6 +69,12 @@
   --calc-eq-bg:#ffff00;--calc-eq-txt:#000;--calc-eq-hover:#ffe000;
   --calc-disp-bg:#000;--calc-disp-expr:#888;--calc-disp-val:#fff;
   --calc-hist-bg:#111;--calc-hist-txt:#888;
+  /* Barra acessibilidade — contraste */
+  --a11y-bg:#000000;--a11y-border:#ffffff;
+  --a11y-btn-txt:#cccccc;--a11y-btn-hover:#ffffff;
+  --a11y-sep:#555555;--a11y-disp:#eeeeee;
+  --a11y-on-bg:#ffff00;--a11y-on-txt:#000000;
+  --a11y-focus:#ffff00;
 }
 /* ═══════ RESET ═══════ */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -65,24 +83,75 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   padding:16px;min-height:100vh;line-height:1.5;transition:background .25s,color .25s}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 
-/* ═══════ CARD HEADER + A11Y ═══════ */
-.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.card-header h1{margin-bottom:0;flex-shrink:1;min-width:0}
-#a11y-bar{display:inline-flex;align-items:center;gap:2px;background:#1e2030;
-  border:1px solid #2a2e42;border-radius:999px;padding:4px 8px;flex-shrink:0}
-.a11y-fs-btn{background:none;border:none;color:#8890aa;font-size:.82rem;font-weight:700;
-  cursor:pointer;padding:4px 7px;border-radius:6px;line-height:1;transition:color .15s;white-space:nowrap}
-.a11y-fs-btn:hover{color:#fff}
-.a11y-fs-btn:focus-visible{outline:2px solid #4a9eff;outline-offset:2px}
-#fs-display{background:none;border:none;color:#c0c8de;font-size:.82rem;font-weight:700;
-  min-width:38px;text-align:center;padding:0 4px;font-variant-numeric:tabular-nums;pointer-events:none}
-.a11y-sep{width:1px;height:20px;background:#2e3448;flex-shrink:0;margin:0 4px}
-.a11y-theme-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;
-  color:#7a8299;border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:600;
-  cursor:pointer;white-space:nowrap;transition:background .18s,color .18s;line-height:1.35}
-.a11y-theme-btn:hover{color:#c8cfdf}
-.a11y-theme-btn.on{background:#fff;color:#12172a;font-weight:700}
-.a11y-theme-btn:focus-visible{outline:2px solid #4a9eff;outline-offset:2px}
+/* ═══════ BARRA DE ACESSIBILIDADE ═══════
+   Posicionada acima do card (.app).
+   Fontes em px fixo — não herda --fs do html,
+   portanto não escala quando o usuário muda o tamanho.
+   Cores via variáveis que mudam com o tema.           */
+#a11y-wrapper{
+  max-width:860px;
+  margin:0 auto 10px;
+  display:flex;
+  justify-content:flex-end;
+}
+#a11y-bar{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--a11y-bg);
+  border:1px solid var(--a11y-border);
+  border-radius:999px;
+  padding:4px 8px;
+  flex-shrink:0;
+  transition:background .25s,border-color .25s;
+}
+/* A−  A+  — texto simples sem fundo */
+.a11y-fs-btn{
+  background:none;border:none;
+  color:var(--a11y-btn-txt);
+  font-size:13px;font-weight:700;
+  cursor:pointer;padding:4px 7px;border-radius:6px;
+  line-height:1;transition:color .15s;white-space:nowrap;
+}
+.a11y-fs-btn:hover{color:var(--a11y-btn-hover)}
+.a11y-fs-btn:focus-visible{outline:2px solid var(--a11y-focus);outline-offset:2px}
+/* display de porcentagem */
+#fs-display{
+  background:none;border:none;
+  color:var(--a11y-disp);
+  font-size:13px;font-weight:700;
+  min-width:38px;text-align:center;padding:0 4px;
+  font-variant-numeric:tabular-nums;pointer-events:none;
+  transition:color .25s;
+}
+/* separador vertical */
+.a11y-sep{
+  width:1px;height:20px;
+  background:var(--a11y-sep);
+  flex-shrink:0;margin:0 4px;
+  transition:background .25s;
+}
+/* pílulas de tema */
+.a11y-theme-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  background:none;border:none;
+  color:var(--a11y-btn-txt);
+  border-radius:999px;padding:5px 13px;
+  font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:background .18s,color .18s;
+  line-height:1.35;
+}
+.a11y-theme-btn:hover{color:var(--a11y-btn-hover)}
+/* pílula ativa: fundo sólido sobre o fundo da barra */
+.a11y-theme-btn.on{
+  background:var(--a11y-on-bg);
+  color:var(--a11y-on-txt);
+  font-weight:700;
+}
+.a11y-theme-btn:focus-visible{outline:2px solid var(--a11y-focus);outline-offset:2px}
+
+/* ═══════ CARD HEADER (só título) ═══════ */
+.card-header{margin-bottom:20px}
+.card-header h1{margin-bottom:0}
 
 /* ═══════ LAYOUT ═══════ */
 .app{max-width:860px;margin:0 auto}
@@ -153,161 +222,89 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .id-card label{font-size:.78rem;font-weight:700;color:var(--text2);display:block;margin-bottom:6px}
 .id-card select{margin-bottom:0;font-size:.85rem}
 
-/* ═══════ CALCULADORA MODAL — Android Material You ═══════ */
 
-#calc-overlay{
-  position:fixed;inset:0;z-index:9000;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  display:none;align-items:flex-end;justify-content:center;
+/* ═══════ WIDGET FEM INLINE ═══════ */
+.fem-calc-box{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px 18px 14px;
+  margin-bottom:16px;
 }
-#calc-overlay.open{display:flex}
-
-/* bottom-sheet desliza de baixo */
-#calc-box{
-  background:var(--calc-bg);
-  border-radius:28px 28px 0 0;
-  width:100%;max-width:420px;
-  box-shadow:0 -4px 32px rgba(0,0,0,.35);
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  position:relative;
-  animation:sheetUp .28s cubic-bezier(.22,1,.36,1);
+.fem-calc-box .fem-title{
+  font-size:.75rem;font-weight:700;
+  color:var(--text3);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:12px;display:block;
 }
-@keyframes sheetUp{from{transform:translateY(100%);opacity:.6}to{transform:translateY(0);opacity:1}}
-
-/* handle pill */
-#calc-handle{
-  width:36px;height:4px;border-radius:2px;
-  background:rgba(128,128,128,.4);
-  margin:10px auto 0;flex-shrink:0;
-}
-
-/* botão fechar — canto superior direito */
-#btn-calc-close{
-  position:absolute;top:10px;right:14px;
-  background:var(--calc-fn-bg);border:none;cursor:pointer;
-  color:var(--calc-fn-txt);font-size:.85rem;
-  width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .12s;z-index:2;
-}
-#btn-calc-close:hover{background:var(--calc-num-hover)}
-#btn-calc-close:focus-visible{outline:2px solid var(--calc-eq-bg);outline-offset:2px}
-
-/* linha histórico fina */
-#calc-hist{
-  font-size:.75rem;color:var(--calc-hist-txt);
-  font-family:'Segoe UI',sans-serif;
-  padding:6px 22px 4px;min-height:24px;background:var(--calc-disp-bg);
-  text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-
-/* visor principal */
-#calc-disp-wrap{
-  padding:4px 22px 20px;
-  background:var(--calc-disp-bg);
-  display:flex;flex-direction:column;
-  align-items:flex-end;gap:3px;
-  min-height:100px;justify-content:flex-end;
-}
-#calc-expr{
-  font-size:1rem;color:var(--calc-disp-expr);
-  font-weight:400;min-height:24px;text-align:right;
-  word-break:break-all;line-height:1.4;
-}
-#calc-val{
-  font-size:3rem;font-weight:300;
-  color:var(--calc-disp-val);
-  text-align:right;word-break:break-all;
-  line-height:1.05;letter-spacing:-.03em;
-  transition:font-size .12s ease;
-}
-
-/* grade de teclas */
-#calc-keys{
+.fem-inputs{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  padding:14px 14px 18px;
-  background:var(--calc-bg);
+  grid-template-columns:1fr 28px 1fr 28px 1fr;
+  align-items:center;
+  gap:8px;
 }
-
-/* tecla base — oval grande sem borda */
-.ckey{
-  border:none;cursor:pointer;border-radius:999px;
-  font-size:1.4rem;font-weight:400;
-  height:72px;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .1s,transform .08s,box-shadow .1s;
-  position:relative;overflow:hidden;
-  -webkit-tap-highlight-color:transparent;
-  user-select:none;
+.fem-inputs .fem-lbl{
+  font-size:.75rem;font-weight:700;color:var(--text2);
+  display:block;margin-bottom:4px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
 }
-.ckey-num{background:var(--calc-num-bg);color:var(--calc-num-txt);
-  box-shadow:0 1px 3px rgba(0,0,0,.14);}
-.ckey-fn {background:var(--calc-fn-bg);color:var(--calc-fn-txt);font-size:1.1rem;
-  box-shadow:0 1px 2px rgba(0,0,0,.1);}
-.ckey-op {background:var(--calc-op-bg);color:var(--calc-op-txt);font-size:1.55rem;font-weight:300;
-  box-shadow:0 1px 2px rgba(0,0,0,.1);}
-.ckey-eq {background:var(--calc-eq-bg);color:var(--calc-eq-txt);font-size:1.55rem;font-weight:300;
-  box-shadow:0 2px 8px rgba(249,171,0,.4);}
-
-.ckey-num:hover{background:var(--calc-num-hover)}
-.ckey-fn:hover {background:var(--calc-fn-hover)}
-.ckey-op:hover {background:var(--calc-op-hover)}
-.ckey-eq:hover {background:var(--calc-eq-hover)}
-
-.ckey:active,.ckey.pressed{transform:scale(.87);box-shadow:none}
-.ckey:focus-visible{outline:3px solid var(--calc-eq-bg);outline-offset:2px;z-index:1}
-
-/* zero: oval largo, texto à esquerda */
-.ckey-zero{
-  grid-column:span 2;
-  justify-content:flex-start;
-  padding-left:26px;
+.fem-inputs input[type="number"]{
+  width:100%;padding:9px 10px;
+  background:var(--surface);
+  border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-size:.93rem;
+  text-align:center;font-family:'Courier New',monospace;
+  font-weight:600;transition:border-color .2s;
+  -moz-appearance:textfield;
 }
-
-/* ripple Material */
-.ckey::after{
-  content:'';position:absolute;border-radius:50%;
-  width:80%;padding-top:80%;top:50%;left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  background:rgba(255,255,255,.2);
-  transition:transform .32s,opacity .32s;
-  opacity:0;pointer-events:none;
+.fem-inputs input[type="number"]::-webkit-outer-spin-button,
+.fem-inputs input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+.fem-inputs input[type="number"]:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(74,158,255,.18);
 }
-.ckey:active::after,.ckey.pressed::after{
-  transform:translate(-50%,-50%) scale(1.6);opacity:1;
+.fem-op{
+  text-align:center;font-size:1.15rem;font-weight:700;
+  color:var(--text3);line-height:1;padding-top:20px;
 }
-
-/* chip "usar resultado" */
-#calc-use-btn{
-  margin:0 14px 16px;
-  padding:12px 16px;border-radius:999px;
-  background:var(--calc-fn-bg);color:var(--calc-fn-txt);
-  border:none;font-size:.85rem;font-weight:600;
-  cursor:pointer;transition:background .15s;
-  display:flex;align-items:center;justify-content:center;gap:6px;
+.fem-result-row{
+  display:flex;align-items:center;gap:10px;margin-top:12px;
 }
-#calc-use-btn:hover{background:var(--calc-fn-hover)}
-#calc-use-btn:focus-visible{outline:2px solid var(--calc-eq-bg);outline-offset:2px}
+.fem-result-row .fem-eq-lbl{
+  font-size:.82rem;font-weight:700;color:var(--text2);white-space:nowrap;
+}
+.fem-result-val{
+  font-family:'Courier New',monospace;font-size:1.05rem;font-weight:700;
+  color:var(--accent);min-width:80px;padding:7px 12px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;text-align:center;
+}
+.btn-fem-usar{
+  margin-left:auto;padding:8px 16px;border-radius:8px;
+  background:var(--accent);color:#fff;border:none;
+  font-size:.82rem;font-weight:700;cursor:pointer;
+  transition:background .15s;white-space:nowrap;
+}
+.btn-fem-usar:hover:not(:disabled){background:var(--accent2)}
+.btn-fem-usar:disabled{opacity:.35;cursor:not-allowed}
+.btn-fem-usar:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
+<div id="a11y-wrapper">
+  <div id="a11y-bar" role="toolbar" aria-label="Acessibilidade">
+    <button class="a11y-fs-btn" id="btn-fs-dec" aria-label="Diminuir fonte">A−</button>
+    <span id="fs-display" aria-live="polite">100%</span>
+    <button class="a11y-fs-btn" id="btn-fs-inc" aria-label="Aumentar fonte">A+</button>
+    <div class="a11y-sep" aria-hidden="true"></div>
+    <button class="a11y-theme-btn on" id="btn-dark"     aria-pressed="true">🌙 Escuro</button>
+    <button class="a11y-theme-btn"    id="btn-light"    aria-pressed="false">🌞 Claro</button>
+    <button class="a11y-theme-btn"    id="btn-contrast" aria-pressed="false">◑ Contraste</button>
+  </div>
+</div>
 <div class="app" role="main" aria-label="Simulador de pilha eletroquímica">
 <div class="card">
   <div class="card-header">
     <h1>Simulador de Pilha Eletroquímica</h1>
-    <div id="a11y-bar" role="toolbar" aria-label="Acessibilidade">
-      <button class="a11y-fs-btn" id="btn-fs-dec" aria-label="Diminuir fonte">A−</button>
-      <span id="fs-display" aria-live="polite">100%</span>
-      <button class="a11y-fs-btn" id="btn-fs-inc" aria-label="Aumentar fonte">A+</button>
-      <div class="a11y-sep" aria-hidden="true"></div>
-      <button class="a11y-theme-btn on" id="btn-dark"     aria-pressed="true">🌙 Escuro</button>
-      <button class="a11y-theme-btn"    id="btn-light"    aria-pressed="false">🌞 Claro</button>
-      <button class="a11y-theme-btn"    id="btn-contrast" aria-pressed="false">◑ Contraste</button>
-    </div>
   </div>
   <nav class="steps-nav" aria-label="Progresso">
     <div class="step-tab current" id="stab1" aria-current="step">1 · Metais</div>
@@ -373,9 +370,39 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <!-- ETAPA 3 -->
   <div id="etapa3" class="step-content" role="region" aria-labelledby="lbl-e3">
     <h2 id="lbl-e3">Calcule a força eletromotriz (FEM)</h2>
-    <p class="hint">Use: <strong>E°<sub>célula</sub> = E°<sub>cátodo</sub> − E°<sub>ânodo</sub></strong>. Os valores de E° aparecem na montagem abaixo. A reação é espontânea quando E° &gt; 0.</p>
+    <p class="hint">Consulte os valores de E° na montagem abaixo e preencha os campos. O resultado será transferido automaticamente.</p>
+
+    <!-- Widget de cálculo inline -->
+    <div class="fem-calc-box" aria-label="Calculadora de FEM">
+      <span class="fem-title">E°<sub>célula</sub> = E°<sub>cátodo</sub> − E°<sub>ânodo</sub></span>
+      <div class="fem-inputs">
+        <div>
+          <label class="fem-lbl" for="fem-cat">E°<sub>cátodo</sub> (V)</label>
+          <input type="number" step="0.001" id="fem-cat" placeholder="0.000" aria-label="Potencial do cátodo em Volts"/>
+        </div>
+        <div class="fem-op" aria-hidden="true">−</div>
+        <div>
+          <label class="fem-lbl" for="fem-an">E°<sub>ânodo</sub> (V)</label>
+          <input type="number" step="0.001" id="fem-an" placeholder="0.000" aria-label="Potencial do ânodo em Volts"/>
+        </div>
+        <div class="fem-op" aria-hidden="true">=</div>
+        <div>
+          <label class="fem-lbl" for="fem-res">E°<sub>célula</sub> (V)</label>
+          <input type="number" step="0.001" id="fem-res" placeholder="—" readonly
+                 aria-label="Resultado calculado de E° célula" aria-live="polite"/>
+        </div>
+      </div>
+      <div class="fem-result-row">
+        <span class="fem-eq-lbl">Resultado calculado:</span>
+        <span class="fem-result-val" id="fem-display" aria-live="polite">—</span>
+        <button class="btn-fem-usar" id="btn-fem-usar" disabled aria-label="Transferir resultado para o campo E° calculado">
+          Usar este valor ↓
+        </button>
+      </div>
+    </div>
+
     <div class="field">
-      <label for="potManual">Valor de E° calculado (V)</label>
+      <label for="potManual">Confirme o valor de E° calculado (V)</label>
       <input type="number" step="0.001" id="potManual" placeholder="Ex: 1.100" aria-required="true"/>
     </div>
     <div class="field">
@@ -388,7 +415,6 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     </div>
     <div class="btn-row">
       <button class="btn" id="btnVoltar2">← Voltar</button>
-      <button class="btn" id="btnAbrirCalc" aria-haspopup="dialog">🧮 Calculadora</button>
       <button class="btn btn-primary" id="btnCalcularFem">Verificar →</button>
     </div>
     <div id="feedbackFem" role="alert" aria-live="polite" class="feedback"></div>
@@ -494,47 +520,7 @@ button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </div>
 </div>
 
-<!-- ══ CALCULADORA MODAL — Android Material You ══ -->
-<div id="calc-overlay" role="dialog" aria-modal="true" aria-labelledby="calc-hdr-lbl">
-  <div id="calc-box">
-    <div id="calc-handle" aria-hidden="true"></div>
-    <button id="btn-calc-close" aria-label="Fechar calculadora">✕</button>
-    <div id="calc-hist" aria-label="Última operação" aria-live="polite"></div>
-    <div id="calc-disp-wrap">
-      <div id="calc-expr" aria-label="Expressão"></div>
-      <div id="calc-val" aria-live="polite" aria-label="Resultado" id="calc-hdr-lbl">0</div>
-    </div>
-    <div id="calc-keys" role="group" aria-label="Teclado">
-      <button class="ckey ckey-fn"  data-a="AC" aria-label="Limpar">AC</button>
-      <button class="ckey ckey-fn"  data-a="±"  aria-label="Inverter sinal">±</button>
-      <button class="ckey ckey-fn"  data-a="%"  aria-label="Porcentagem">%</button>
-      <button class="ckey ckey-op"  data-a="÷"  aria-label="Dividir">÷</button>
 
-      <button class="ckey ckey-num" data-a="7">7</button>
-      <button class="ckey ckey-num" data-a="8">8</button>
-      <button class="ckey ckey-num" data-a="9">9</button>
-      <button class="ckey ckey-op"  data-a="×"  aria-label="Multiplicar">×</button>
-
-      <button class="ckey ckey-num" data-a="4">4</button>
-      <button class="ckey ckey-num" data-a="5">5</button>
-      <button class="ckey ckey-num" data-a="6">6</button>
-      <button class="ckey ckey-op"  data-a="−"  aria-label="Subtrair">−</button>
-
-      <button class="ckey ckey-num" data-a="1">1</button>
-      <button class="ckey ckey-num" data-a="2">2</button>
-      <button class="ckey ckey-num" data-a="3">3</button>
-      <button class="ckey ckey-op"  data-a="+"  aria-label="Somar">+</button>
-
-      <button class="ckey ckey-num ckey-zero" data-a="0" aria-label="Zero">0</button>
-      <button class="ckey ckey-num" data-a="."  aria-label="Decimal">.</button>
-      <button class="ckey ckey-fn"  data-a="⌫"  aria-label="Apagar dígito">⌫</button>
-      <button class="ckey ckey-eq"  data-a="="  aria-label="Igual">=</button>
-    </div>
-    <button id="calc-use-btn" aria-label="Transferir resultado para o campo E°">
-      <span aria-hidden="true">↑</span> Usar resultado no campo E°
-    </button>
-  </div>
-</div>
 
 <script>
 /* ══════════════════════════════════════════════════
@@ -944,125 +930,47 @@ document.getElementById("btnVoltar3").addEventListener("click",()=>{
 });
 chk1();chk2();
 
-/* ══════════════════════════════════════════════
-   CALCULADORA — redesenhada
-   · Visor duplo: expressão (topo) + valor (grande)
-   · Histórico da última operação completa
-   · Backspace (⌫), teclado físico completo
-   · Botão "Usar resultado" preenche campo E°
-══════════════════════════════════════════════ */
+/* ══ WIDGET FEM INLINE ══ */
 (function(){
-  /* estado */
-  let cur="0", expr="", op=null, prev=null, justEq=false, lastExpr="";
+  const inCat = document.getElementById("fem-cat");
+  const inAn  = document.getElementById("fem-an");
+  const inRes = document.getElementById("fem-res");
+  const disp  = document.getElementById("fem-display");
+  const btnUsar = document.getElementById("btn-fem-usar");
 
-  const dVal =document.getElementById("calc-val");
-  const dExpr =document.getElementById("calc-expr");
-  const dHist =document.getElementById("calc-hist");
-
-  function render(){
-    /* ajusta tamanho de fonte pelo comprimento */
-    const len=cur.length;
-    dVal.style.fontSize=len>10?"1.3rem":len>8?"1.6rem":"2rem";
-    dVal.textContent=cur;
-    dExpr.textContent=expr;
-  }
-
-  function fmt(n){
-    /* formata número evitando notação científica desnecessária */
-    if(!isFinite(n)) return "Erro";
-    const s=parseFloat(n.toFixed(10)).toString();
-    return s.length>14?parseFloat(n.toPrecision(10)).toString():s;
-  }
-
-  function pressKey(a){
-    if(a>="0"&&a<="9"){
-      if(justEq){cur="0";expr="";justEq=false;}
-      cur=(cur==="0"||cur==="-0")?
-          (cur==="-0"?"-"+a:a):
-          (cur+a);
-    }else if(a==="."){
-      if(justEq){cur="0.";expr="";justEq=false;}
-      else if(!cur.includes(".")) cur+=".";
-    }else if(a==="AC"){
-      cur="0";expr="";op=null;prev=null;justEq=false;
-    }else if(a==="⌫"){
-      if(justEq){cur="0";expr="";justEq=false;return render();}
-      cur=cur.length>1?cur.slice(0,-1):"0";
-    }else if(a==="±"){
-      cur=cur.startsWith("-")?cur.slice(1):"-"+cur;
-    }else if(a==="%"){
-      cur=fmt(parseFloat(cur)/100);
-    }else if(["+","−","×","÷"].includes(a)){
-      if(op&&prev!==null&&!justEq){
-        const res=calc(prev,op,parseFloat(cur));
-        cur=fmt(res);prev=res;
-      }else{
-        prev=parseFloat(cur);
-      }
-      op=a; expr=cur+" "+a; justEq=false;
-    }else if(a==="="){
-      if(op&&prev!==null){
-        const c=parseFloat(cur);
-        const res=calc(prev,op,c);
-        lastExpr=fmt(prev)+" "+op+" "+fmt(c)+" =";
-        dHist.textContent=lastExpr+" "+fmt(res);
-        cur=fmt(res);expr="";op=null;prev=null;justEq=true;
-      }
-    }
-    render();
-  }
-
-  function calc(a,op,b){
-    switch(op){
-      case "+": return a+b;
-      case "−": return a-b;
-      case "×": return a*b;
-      case "÷": return b!==0?a/b:NaN;
+  function recalc(){
+    const cat = parseFloat(inCat.value);
+    const an  = parseFloat(inAn.value);
+    if(!isNaN(cat) && !isNaN(an)){
+      const r = parseFloat((cat - an).toFixed(4));
+      inRes.value = r.toFixed(3);
+      disp.textContent = r.toFixed(3) + " V";
+      btnUsar.disabled = false;
+    } else {
+      inRes.value = "";
+      disp.textContent = "—";
+      btnUsar.disabled = true;
     }
   }
 
-  /* clique nos botões */
-  document.querySelectorAll(".ckey").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      btn.classList.add("pressed");
-      setTimeout(()=>btn.classList.remove("pressed"),120);
-      pressKey(btn.dataset.a);
-    });
+  inCat.addEventListener("input", recalc);
+  inAn.addEventListener("input",  recalc);
+
+  btnUsar.addEventListener("click", ()=>{
+    if(!inRes.value) return;
+    document.getElementById("potManual").value = inRes.value;
+    /* feedback visual rápido */
+    btnUsar.textContent = "✓ Transferido!";
+    setTimeout(()=>{ btnUsar.textContent = "Usar este valor ↓"; }, 1600);
   });
 
-  /* teclado físico */
-  document.addEventListener("keydown",e=>{
-    if(!document.getElementById("calc-overlay").classList.contains("open")) return;
-    e.preventDefault();
-    const map={"0":"0","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9",
-      ".":".","Enter":"=","=":"=","Backspace":"⌫","Delete":"AC","Escape":"close",
-      "+":"+","-":"−","*":"×","/":"÷","%":"%"};
-    const a=map[e.key];
-    if(a==="close"){fecharCalc();return;}
-    if(a) pressKey(a);
-  });
-
-  /* usar resultado */
-  document.getElementById("calc-use-btn").addEventListener("click",()=>{
-    const num=parseFloat(dVal.textContent);
-    if(!isNaN(num)){
-      document.getElementById("potManual").value=parseFloat(num.toFixed(4));
-    }
-    fecharCalc();
-  });
-
-  /* abrir/fechar */
-  function fecharCalc(){document.getElementById("calc-overlay").classList.remove("open");}
-  document.getElementById("btnAbrirCalc").addEventListener("click",()=>{
-    document.getElementById("calc-overlay").classList.add("open");
-    dVal.focus();
-  });
-  document.getElementById("btn-calc-close").addEventListener("click",fecharCalc);
-  document.getElementById("calc-overlay").addEventListener("click",e=>{
-    if(e.target===document.getElementById("calc-overlay")) fecharCalc();
-  });
-
-  render();
+  /* limpa o widget ao voltar para etapa 2 ou recomeçar */
+  function resetWidget(){
+    inCat.value=""; inAn.value=""; inRes.value="";
+    disp.textContent="—"; btnUsar.disabled=true;
+  }
+  document.getElementById("btnVoltar2").addEventListener("click", resetWidget);
+  document.getElementById("btnVoltar3").addEventListener("click", resetWidget);
 })();
 
 /* ══ ACESSIBILIDADE ══ */
